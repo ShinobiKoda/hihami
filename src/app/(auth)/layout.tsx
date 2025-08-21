@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import "./globals.css";
-
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -11,22 +9,18 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Enefty | Homepage",
+  title: "Enefty | Register",
   description: "NFT Marketplace",
 };
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${poppins.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <div className={` min-h-screen ${poppins.variable}`}>
+      {children}
+    </div>
   );
 }
