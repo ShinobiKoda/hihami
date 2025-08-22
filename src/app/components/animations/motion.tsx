@@ -1,6 +1,5 @@
 import { Variants } from "motion/react";
 
-
 export const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } },
@@ -92,6 +91,14 @@ export const scaleOnHover: Variants = {
       type: "spring",
       stiffness: 400,
       damping: 25,
+    },
+  },
+  tap: {
+    scale: 0.98,
+    transition: {
+      type: "spring",
+      stiffness: 500,
+      damping: 35,
     },
   },
 };

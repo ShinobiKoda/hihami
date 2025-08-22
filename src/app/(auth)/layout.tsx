@@ -18,9 +18,5 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className={` min-h-screen ${poppins.variable}`}>
-      {children}
-    </div>
-  );
+  return <div className={` min-h-screen ${poppins.variable}`}>{children}</div>;
 }
