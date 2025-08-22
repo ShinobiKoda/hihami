@@ -16,9 +16,12 @@ import {
   scaleOnHover,
 } from "@/app/components/animations/motion";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -26,13 +29,27 @@ export default function Page() {
   } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit = async (data: LoginSchema) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("Login form data", data);
+    setServerError(null);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !json.ok) {
+        setServerError(json.error ?? "You're not signed up yet. Go to signup.");
+        return;
+      }
+      router.push("/Home");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Network error";
+      setServerError(msg);
+    }
   };
 
   return (
     <div className="w-full lg:flex min-h-screen relative bg-[#160430] text-white">
-      {/* Background / hero */}
       <motion.div
         className="relative max-w-[932px] lg:min-h-screen h-[571px] flex-1 lg:p-8 p-4 bg-[url('/images/background-img-mobile.svg')] lg:bg-[url('/images/background-img-desktop.svg')] bg-cover bg-center"
         variants={fadeInDown}
@@ -54,11 +71,9 @@ export default function Page() {
             </span>
           </p>
         </div>
-        {/* Mobile gradient to blend image into background */}
         <div className="lg:hidden absolute bottom-0 inset-x-0 h-28 bg-gradient-to-b from-transparent to-[#160430] pointer-events-none" />
       </motion.div>
 
-      {/* Form */}
       <motion.div
         className="flex-1 flex flex-col items-center lg:items-start justify-center lg:ml-[10rem] px-4 relative lg:static z-20 -top-[14rem] lg:top-0"
         variants={fadeInUp}
@@ -75,6 +90,11 @@ export default function Page() {
           <motion.p className="font-bold text-lg" variants={fadeInDown}>
             Sign in with email address
           </motion.p>
+          {serverError && (
+            <p className="text-red-400 text-sm" role="alert">
+              {serverError}
+            </p>
+          )}
           <motion.form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col w-full gap-4"

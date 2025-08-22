@@ -25,15 +25,23 @@ export default function Page() {
   });
 
   const onSubmit = async (data: ForgotPasswordSchema) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("Forgot password request", data);
-    // Navigate to verify page after sending
-    router.push("/verify-email");
+    const res = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: data.email }),
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      alert(json?.error ?? "Failed to send reset link");
+      return;
+    }
+    // Inform the user and redirect to login
+    alert("If the email exists, a reset link has been sent.");
+    router.push("/login");
   };
 
   return (
     <div className="w-full lg:flex min-h-screen relative bg-[#160430] text-white">
-      {/* Background / hero */}
       <motion.div
         className="relative max-w-[932px] lg:min-h-screen h-[571px] flex-1 lg:p-8 p-4 bg-[url('/images/background-img-mobile.svg')] lg:bg-[url('/images/background-img-desktop.svg')] bg-cover bg-center"
         variants={fadeInDown}

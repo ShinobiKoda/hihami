@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
   fadeInUp,
@@ -12,6 +13,12 @@ import Image from "next/image";
 export default function Page() {
   const [code, setCode] = useState(["", "", "", ""]);
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+  const search = useSearchParams();
+  const email = search.get("email");
+  const uid = search.get("uid");
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (index: number, value: string) => {
     const digit = value.replace(/\D/g, "").slice(0, 1);
@@ -45,11 +52,35 @@ export default function Page() {
     inputsRef.current[focusIndex]?.focus();
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setServerError(null);
     const joined = code.join("");
-    if (joined.length === 4) {
-      console.log("Verify code:", joined);
+    if (joined.length !== 4) return;
+    if (!uid) {
+      setServerError("Missing user id. Please restart signup.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid, otp: joined }),
+      });
+      const json = (await res.json()) as { message?: string; error?: string };
+      if (!res.ok) {
+        setServerError(json.error ?? "Verification failed. Try again.");
+        return;
+      }
+      // Go to login after successful verify
+      router.push("/login?verified=1");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Network error";
+      setServerError(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -101,8 +132,14 @@ export default function Page() {
           className="w-full max-w-[460px] space-y-5 bg-[#261046] p-6 rounded-md"
           variants={zoomIn}
         >
+          {serverError && (
+            <p className="text-red-400 text-sm" role="alert">
+              {serverError}
+            </p>
+          )}
           <p className="text-[#D5D5D5] text-base lg:text-lg">
-            Enter the four digit number you received in your email
+            Enter the four digit number we sent
+            {email ? ` to ${email}` : " to your email"}
           </p>
 
           <div className="flex items-center gap-4">
@@ -127,13 +164,13 @@ export default function Page() {
 
           <motion.button
             type="submit"
-            disabled={!isComplete}
+            disabled={!isComplete || submitting}
             className="text-white font-medium text-lg lg:text-xl py-3 rounded-md cursor-pointer disabled:opacity-60 bg-[linear-gradient(89.933deg,#501794_0%,#3E70A1_100%)] w-full"
             variants={scaleOnHover}
             whileHover="hover"
             whileTap="tap"
           >
-            Verify
+            {submitting ? "Verifying..." : "Verify"}
           </motion.button>
         </motion.form>
       </motion.div>

@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { signupSchema, type SignupSchema } from "@/lib/auth";
 import { FaUser, FaEye, FaGoogle, FaFacebook } from "react-icons/fa";
 import { IoIosMail, IoIosEyeOff } from "react-icons/io";
@@ -19,6 +20,8 @@ import Image from "next/image";
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -26,9 +29,41 @@ export default function Page() {
   } = useForm<SignupSchema>({ resolver: zodResolver(signupSchema) });
 
   const onSubmit = async (data: SignupSchema) => {
-    // Simulate network delay of 3 seconds
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    console.log("Signup form data", data);
+    setServerError(null);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          username: data.name, // map UI field to API expectation
+        }),
+      });
+
+      const json = (await res.json()) as {
+        ok: boolean;
+        uid?: string;
+        error?: string;
+      };
+      if (!res.ok || !json.ok || !json.uid) {
+        if (res.status === 409) {
+          setServerError(
+            (json.error ?? "This email is already registered.") +
+              " You can log in instead."
+          );
+        } else {
+          setServerError(json.error ?? "Signup failed. Please try again.");
+        }
+        return;
+      }
+
+      const params = new URLSearchParams({ uid: json.uid, email: data.email });
+      router.push(`/verify-email?${params.toString()}`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Network error";
+      setServerError(msg);
+    }
   };
 
   return (
@@ -80,6 +115,11 @@ export default function Page() {
             initial="hidden"
             animate="visible"
           >
+            {serverError && (
+              <p className="text-red-400 text-sm -mb-2" role="alert">
+                {serverError}
+              </p>
+            )}
             <motion.div
               className="bg-[#261046] py-3 px-4 rounded-md w-full text-[#A4A4A4] flex items-center"
               variants={fadeInUp}
@@ -87,7 +127,7 @@ export default function Page() {
               <FaUser className="inline-block mr-2" size={20} />
               <input
                 type="text"
-                placeholder="Name"
+                placeholder="Username"
                 autoComplete="name"
                 className="bg-transparent w-full outline-none border-none"
                 {...register("name")}
