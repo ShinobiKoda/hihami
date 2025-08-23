@@ -74,7 +74,6 @@ export default function Page() {
         setServerError(json.error ?? "Verification failed. Try again.");
         return;
       }
-      // Go to login after successful verify
       router.push("/login?verified=1");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Network error";
@@ -101,10 +100,10 @@ export default function Page() {
             alt="Logo Image"
             width={50}
             height={50}
-            className="w-[40px] h-[30px]"
+            className="w-[40px] h-[50px]"
           />
           <p className="flex flex-col">
-            <span className="font-bold text-2xl">ENEFTY</span>
+            <span className="font-bold text-2xl">HIHAMI</span>
             <span className="font-normal text-[10px] tracking-[0.7rem] justify-end">
               NEON
             </span>

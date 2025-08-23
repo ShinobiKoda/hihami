@@ -35,7 +35,6 @@ export default function Page() {
       alert(json?.error ?? "Failed to send reset link");
       return;
     }
-    // Inform the user and redirect to login
     alert("If the email exists, a reset link has been sent.");
     router.push("/login");
   };
@@ -54,11 +53,11 @@ export default function Page() {
             alt="Logo Image"
             width={50}
             height={50}
-            className="w-[40px] h-[30px]"
+            className="w-[40px] h-[50px]"
           />
 
           <p className="flex flex-col">
-            <span className="font-bold text-2xl">ENEFTY</span>
+            <span className="font-bold text-2xl">HIHAMI</span>
             <span className="font-normal text-[10px] tracking-[0.7rem] justify-end">
               NEON
             </span>

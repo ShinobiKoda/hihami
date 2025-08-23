@@ -1,4 +1,4 @@
-# Enefty
+# HiHami
 
 Full-stack Next.js app with Supabase auth (custom email verification via OTP), profile management, and password reset flow. Animated UI built with motion.
 

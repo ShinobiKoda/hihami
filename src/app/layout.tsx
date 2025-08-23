@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "./components/animations/toast";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -12,6 +13,9 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Enefty | Homepage",
   description: "NFT Marketplace",
+  icons: {
+    icon: "/images/logo.svg",
+  },
 };
 
 export default function RootLayout({
@@ -21,7 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>{children}</body>
+      <body className={`${poppins.variable} antialiased`}>
+        {children}
+        <ToastProvider />
+      </body>
     </html>
   );
 }

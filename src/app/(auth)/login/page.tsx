@@ -17,6 +17,7 @@ import {
 } from "@/app/components/animations/motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { notifyLoginSuccess } from "@/app/components/animations/toast";
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +42,19 @@ export default function Page() {
         setServerError(json.error ?? "You're not signed up yet. Go to signup.");
         return;
       }
-      router.push("/Home");
+      try {
+        const meRes = await fetch("/api/me", { cache: "no-store" });
+        if (meRes.ok) {
+          const meJson = (await meRes.json()) as {
+            ok: boolean;
+            data?: { username?: string | null; email?: string | null };
+          };
+          const name = meJson.data?.username || meJson.data?.email || "user";
+          notifyLoginSuccess(String(name));
+        }
+      } catch {}
+
+      setTimeout(() => router.push("/Home"), 50);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Network error";
       setServerError(msg);
@@ -62,10 +75,10 @@ export default function Page() {
             alt="Logo Image"
             width={50}
             height={50}
-            className="w-[40px] h-[30px]"
+            className="w-[40px] h-[50px]"
           />
           <p className="flex flex-col">
-            <span className="font-bold text-2xl">ENEFTY</span>
+            <span className="font-bold text-2xl">HIHAMI</span>
             <span className="font-normal text-[10px] tracking-[0.7rem] justify-end">
               NEON
             </span>

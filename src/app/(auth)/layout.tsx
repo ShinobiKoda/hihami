@@ -9,8 +9,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Enefty | Register",
+  title: "HIHAMI | Register",
   description: "NFT Marketplace",
+  icons: {
+    icon: "/images/logo.svg",
+  },
 };
 
 export default function AuthLayout({
