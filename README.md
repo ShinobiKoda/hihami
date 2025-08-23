@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Enefty
 
-## Getting Started
+Full-stack Next.js app with Supabase auth (custom email verification via OTP), profile management, and password reset flow. Animated UI built with motion.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js App Router (src/app)
+- Supabase Auth (SSR cookies via `@supabase/ssr`)
+- Signup with username + email/password
+  - OTP verification emailed via Resend
+  - OTP expires after 10 minutes
+- Login with email/password
+  - Blocks unverified users
+  - Custom message if email doesn’t exist
+- Forgot password
+  - Sends Supabase reset link
+  - Non-enumerable responses (always generic success)
+  - Reset page updates password using recovery session
+- Minimal user menu on Home page showing username and email
+- Type-safe validation with Zod and React Hook Form
+
+## Project Structure
+
+- `src/lib/supabase/`
+  - `server.ts`: SSR Supabase client with cookie management
+  - `admin.ts`: service-role client for server actions
+  - `browser.ts`: browser client for client-side flows (reset password)
+- `src/app/api/auth/`
+  - `signup/route.ts`: creates user, writes profile, generates OTP, sends email
+  - `verify-otp/route.ts`: checks OTP + expiry, verifies auth email
+  - `login/route.ts`: signs in; if fail, checks if email exists, returns tailored errors
+  - `forgot-password/route.ts`: sends reset link and returns generic success
+- `src/app/(auth)/`
+  - `signup/`: signup UI
+  - `login/`: login UI
+  - `verify-email/`: OTP input UI (expects `uid` and `email` query)
+  - `forgot-password/`: request reset UI
+  - `reset-password/`: set new password after email link
+- `src/app/Home/page.tsx`: sample home with user icon popover
+
+## Requirements
+
+Create a `.env.local` with:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=... # server-only
+NEXT_PUBLIC_SITE_URL=http://localhost:3000 # for building reset links
+
+# Email provider for OTP (Resend)
+RESEND_API_KEY=...
+EMAIL_FROM="Enefty <noreply@your-domain.com>"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Database tables (Supabase):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `profiles` (RLS as needed)
+  - `id: uuid` (PK, references auth.users.id)
+  - `username: text` (unique)
+  - `is_verified: boolean`
+  - `otp_code: text` (sha256 hex)
+  - `otp_expires_at: timestamptz`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development
 
-## Learn More
+Install dependencies and run dev server:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open http://localhost:3000
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Auth Flows
 
-## Deploy on Vercel
+1. Signup
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- POST `/api/auth/signup` with email/password/username
+- Creates user, saves profile, emails OTP
+- UI redirects to `/verify-email?uid=...&email=...`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Verify Email
+
+- POST `/api/auth/verify-otp` with `uid` + `otp`
+- Verifies if OTP matches and not expired; sets `is_verified`
+
+3. Login
+
+- POST `/api/auth/login`
+- If bad credentials and email not found: returns "You don't have an account. Sign up"
+- If unverified: blocks login
+
+4. Forgot/Reset Password
+
+- POST `/api/auth/forgot-password` with email (always returns generic success)
+- User clicks email link to `/reset-password?type=recovery...`
+- Page updates password via `supabase.auth.updateUser({ password })`
+
+## Notes
+
+- OTP is 4 digits; stored as SHA-256 hash with 10-minute expiry.
+- The forgot-password endpoint avoids account enumeration by returning generic success.
+- Ensure `NEXT_PUBLIC_SITE_URL` is set correctly in production for password reset links.
+
+## Scripts
+
+- `npm run dev` – start dev with Turbopack
+- `npm run build` – build
+- `npm run start` – start production server
+- `npm run lint` – run eslint
+
+## License
+
+MIT
