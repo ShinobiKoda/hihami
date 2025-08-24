@@ -13,12 +13,16 @@ import {
 } from "../animations/motion";
 import { MobileSidebar } from "./MobileSidebar";
 import { useUser } from "@/app/context/UserContext";
+import { FiRefreshCw } from "react-icons/fi";
+import { FaRegUser } from "react-icons/fa";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const openMenu = useCallback(() => setOpen(true), []);
   const closeMenu = useCallback(() => setOpen(false), []);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [avatarSeed, setAvatarSeed] = useState<string>("p");
+  const [avatarError, setAvatarError] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const { user: me, refreshUser, clearUser } = useUser();
@@ -64,6 +68,19 @@ export function Navbar() {
     clearUser();
     router.replace("/login");
   };
+
+  const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
+    avatarSeed
+  )}`;
+  const randomizeSeed = () => {
+    const s = Math.random().toString(36).slice(2, 10);
+    setAvatarSeed(s);
+  };
+
+  // Reset fallback state whenever the seed changes
+  useEffect(() => {
+    setAvatarError(false);
+  }, [avatarSeed]);
 
   return (
     <motion.nav
@@ -123,29 +140,38 @@ export function Navbar() {
           onClick={openMenu}
           className="lg:hidden w-10 h-10 rounded-full bg-white flex items-center justify-center hover:opacity-85"
         >
-          <Image
-            src="https://api.dicebear.com/7.x/adventurer/svg?seed=p"
-            alt="avatar"
-            width={100}
-            height={100}
-            className="w-full rounded-full"
-          />
+          {avatarError ? (
+            <FaRegUser className="w-6 h-6 text-[#160430]" />
+          ) : (
+            <Image
+              src={avatarUrl}
+              alt="avatar"
+              width={100}
+              height={100}
+              className="w-full rounded-full"
+              onError={() => setAvatarError(true)}
+            />
+          )}
         </button>
 
-        {/* Desktop: avatar toggles profile popover */}
         <div className="relative hidden lg:block" ref={profileRef}>
           <button
             aria-label="Open profile"
             onClick={() => setProfileOpen((v) => !v)}
             className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:opacity-85"
           >
-            <Image
-              src="https://api.dicebear.com/7.x/adventurer/svg?seed=p"
-              alt="avatar"
-              width={100}
-              height={100}
-              className="w-full rounded-full"
-            />
+            {avatarError ? (
+              <FaRegUser className="w-6 h-6 text-[#160430]" />
+            ) : (
+              <Image
+                src={avatarUrl}
+                alt="avatar"
+                width={100}
+                height={100}
+                className="w-full rounded-full"
+                onError={() => setAvatarError(true)}
+              />
+            )}
           </button>
           <AnimatePresence>
             {profileOpen && (
@@ -162,16 +188,21 @@ export function Navbar() {
                 className="absolute right-0 mt-2 w-72 rounded-xl border border-white/10 bg-gradient-to-b from-[#0c0c12]/95 to-[#131320]/95 text-white shadow-2xl p-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white overflow-hidden">
-                    <Image
-                      src="https://api.dicebear.com/7.x/adventurer/svg?seed=p"
-                      alt="avatar"
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-10 h-10 rounded-full bg-white overflow-hidden flex items-center justify-center">
+                    {avatarError ? (
+                      <FaRegUser className="w-5 h-5 text-[#160430]" />
+                    ) : (
+                      <Image
+                        src={avatarUrl}
+                        alt="avatar"
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                        onError={() => setAvatarError(true)}
+                      />
+                    )}
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="text-sm text-white/70 truncate">
                       {me?.email ?? "Not signed in"}
                     </p>
@@ -179,6 +210,13 @@ export function Navbar() {
                       {me?.username ?? "Guest"}
                     </p>
                   </div>
+                  <button
+                    aria-label="Refresh avatar"
+                    onClick={randomizeSeed}
+                    className="ml-2 rounded-md p-2 text-white/75 hover:text-white hover:bg-white/10 transition"
+                  >
+                    <FiRefreshCw className="w-4 h-4" />
+                  </button>
                 </div>
                 <div className="mt-3 h-px bg-white/10" />
                 <ul className="mt-3 space-y-2 text-sm *:rounded-md *:px-3 *:py-2">
@@ -196,7 +234,12 @@ export function Navbar() {
           </AnimatePresence>
         </div>
       </div>
-      <MobileSidebar open={open} onClose={closeMenu} />
+      <MobileSidebar
+        open={open}
+        onClose={closeMenu}
+        avatarSeed={avatarSeed}
+        onRandomizeSeed={randomizeSeed}
+      />
     </motion.nav>
   );
 }

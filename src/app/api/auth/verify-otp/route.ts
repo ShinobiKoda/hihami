@@ -1,4 +1,3 @@
-// app/api/auth/verify-otp/route.ts
 import { NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { verifyOtpSchema } from "@/lib/validation";
@@ -15,7 +14,6 @@ export async function POST(req: Request) {
 
     const { otp } = parsed.data;
 
-    // Read pending signup from cookie
     const cookieStore = await cookies();
     const payload = cookieStore.get("pending_signup")?.value;
     if (!payload) {
@@ -44,7 +42,6 @@ export async function POST(req: Request) {
     const { email, password, username, otpHash, expiresAt } = data;
     const exp = new Date(expiresAt);
     if (!exp || Number.isNaN(exp.getTime()) || exp <= new Date()) {
-      // Clear stale cookie
       const resp = NextResponse.json(
         { error: "OTP expired. Please sign up again." },
         { status: 400 }
@@ -70,7 +67,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: msg }, { status: 500 });
     }
 
-    // Create user in Supabase Auth and profile now (idempotent handling)
     const { data: created, error: createErr } =
       await admin.auth.admin.createUser({
         email,
@@ -85,7 +81,6 @@ export async function POST(req: Request) {
       if (!already) {
         return NextResponse.json({ error: msg }, { status: 500 });
       }
-      // Find existing user by email (best-effort within first page)
       try {
         const { data: usersList } = await admin.auth.admin.listUsers({
           page: 1,
@@ -109,7 +104,6 @@ export async function POST(req: Request) {
       uid = created.user.id;
     }
 
-    // Ensure profile row exists and is marked verified, without overwriting username if present
     const { data: existingProfile } = await admin
       .from("profiles")
       .select("id")

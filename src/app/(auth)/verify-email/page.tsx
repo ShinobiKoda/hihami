@@ -8,6 +8,7 @@ import {
   zoomIn,
   scaleOnHover,
 } from "@/app/components/animations/motion";
+import { ClipLoader } from "react-spinners";
 import Image from "next/image";
 
 export default function Page() {
@@ -15,7 +16,6 @@ export default function Page() {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const search = useSearchParams();
   const email = search.get("email");
-  // uid removed in new flow; we use a pending signup cookie on the server
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -57,7 +57,6 @@ export default function Page() {
     setServerError(null);
     const joined = code.join("");
     if (joined.length !== 4) return;
-    // uid not required; server reads pending_signup cookie
 
     try {
       setSubmitting(true);
@@ -84,7 +83,6 @@ export default function Page() {
 
   return (
     <div className="w-full lg:flex min-h-screen relative bg-[#160430] text-white">
-      {/* Background / hero */}
       <motion.div
         className="relative max-w-[932px] lg:min-h-screen h-[571px] flex-1 lg:p-8 p-4 bg-[url('/images/background-img-mobile.svg')] lg:bg-[url('/images/background-img-desktop.svg')] bg-cover bg-center"
         variants={fadeInDown}
@@ -106,11 +104,9 @@ export default function Page() {
             </span>
           </p>
         </div>
-        {/* Mobile gradient to blend image into background */}
         <div className="lg:hidden absolute bottom-0 inset-x-0 h-28 bg-gradient-to-b from-transparent to-[#160430] pointer-events-none" />
       </motion.div>
 
-      {/* Verify content */}
       <motion.div
         className="flex-1 flex flex-col items-center lg:items-start justify-center lg:ml-[10rem] px-4 relative lg:static z-20 -top-[14rem] lg:top-0"
         variants={fadeInUp}
@@ -161,12 +157,12 @@ export default function Page() {
           <motion.button
             type="submit"
             disabled={!isComplete || submitting}
-            className="text-white font-medium text-lg lg:text-xl py-3 rounded-md cursor-pointer disabled:opacity-60 bg-[linear-gradient(89.933deg,#501794_0%,#3E70A1_100%)] w-full"
+            className="text-white font-medium text-lg lg:text-xl py-3 rounded-md cursor-pointer disabled:opacity-60 bg-[linear-gradient(89.933deg,#501794_0%,#3E70A1_100%)] w-full flex items-center gap-2"
             variants={scaleOnHover}
             whileHover="hover"
             whileTap="tap"
           >
-            {submitting ? "Verifying..." : "Verify"}
+            {submitting ? <span><ClipLoader color="white"/>Verifying....</span> : "Verify"}
           </motion.button>
         </motion.form>
       </motion.div>

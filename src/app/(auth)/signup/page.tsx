@@ -37,7 +37,7 @@ export default function Page() {
         body: JSON.stringify({
           email: data.email,
           password: data.password,
-          username: data.name, // map UI field to API expectation
+          username: data.name, 
         }),
       });
 

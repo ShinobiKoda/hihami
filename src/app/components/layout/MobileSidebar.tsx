@@ -11,13 +11,21 @@ import {
   fadeInUp,
 } from "../../components/animations/motion";
 import { useUser } from "@/app/context/UserContext";
+import { FiRefreshCw } from "react-icons/fi";
 
 type MobileSidebarProps = {
   open: boolean;
   onClose: () => void;
+  avatarSeed: string;
+  onRandomizeSeed: () => void;
 };
 
-export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
+export function MobileSidebar({
+  open,
+  onClose,
+  avatarSeed,
+  onRandomizeSeed,
+}: MobileSidebarProps) {
   const { user: me, refreshUser } = useUser();
   const router = useRouter();
   useEffect(() => {
@@ -32,6 +40,10 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
   useEffect(() => {
     if (open) void refreshUser();
   }, [open, refreshUser]);
+
+  const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
+    avatarSeed
+  )}`;
 
   return (
     <AnimatePresence>
@@ -59,12 +71,25 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
             <div className="px-5 pt-6 pb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden">
+                
                   <Image
-                    src="https://api.dicebear.com/7.x/adventurer/svg?seed=p"
+                    src={avatarUrl}
                     alt="avatar"
                     width={40}
                     height={40}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      target.style.display = "none";
+                      const parent = target.parentElement;
+                      if (parent) {
+                        const span = document.createElement("span");
+                        span.className =
+                          "flex items-center justify-center w-full h-full";
+                        span.innerHTML = `<svg viewBox='0 0 448 512' width='18' height='18' fill='#160430'><path d='M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z'/></svg>`;
+                        parent.appendChild(span);
+                      }
+                    }}
                   />
                 </div>
                 <div className="min-w-0">
@@ -76,6 +101,13 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
                   </p>
                 </div>
               </div>
+              <button
+                aria-label="Refresh avatar"
+                onClick={onRandomizeSeed}
+                className="rounded-md p-2 text-white/80 hover:text-white hover:bg-white/10 transition mr-1"
+              >
+                <FiRefreshCw className="w-4 h-4" />
+              </button>
               <button
                 aria-label="Close"
                 onClick={onClose}

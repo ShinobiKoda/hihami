@@ -21,11 +21,9 @@ export async function POST(req: Request) {
     const json = await req.json();
     const { email, password, username } = bodySchema.parse(json);
 
-    // Validate email is not already registered and username is available
     try {
       const admin = createSupabaseAdminClient();
 
-      // Check email existence (best-effort within first page)
       try {
         const { data: usersList } = await admin.auth.admin.listUsers({
           page: 1,
@@ -43,10 +41,8 @@ export async function POST(req: Request) {
           );
         }
       } catch {
-        // Ignore listing errors; continue best-effort
       }
 
-      // Check username availability
       const { data: usernameCheck } = await admin
         .from("profiles")
         .select("id")
@@ -66,7 +62,6 @@ export async function POST(req: Request) {
     const otp = genOtp();
     const expiresAt = addMinutes(new Date(), 10).toISOString();
 
-    // Store pending signup securely in an HttpOnly cookie (no Supabase writes yet)
     const cookieStore = await cookies();
     const payload = encrypt(
       JSON.stringify({
@@ -85,7 +80,6 @@ export async function POST(req: Request) {
       maxAge: 60 * 10, // 10 minutes
     });
 
-    // Send OTP via email
     try {
       await sendOtpEmail(email, otp);
       if (process.env.NODE_ENV !== "production") {
@@ -99,7 +93,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Respond that verification is required; client should go to verify-email with no uid yet
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
     if (e instanceof z.ZodError) {
