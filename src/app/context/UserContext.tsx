@@ -25,7 +25,6 @@ const STORAGE_KEY = "hihami.me.v1";
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Me>(null);
 
-  // Load cached user quickly on mount (if present)
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -36,7 +35,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
-  // Always try to refresh from server on mount
   const clearUser = useCallback(() => {
     setUser(null);
     try {
@@ -64,7 +62,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
         clearUser();
       }
     } catch {
-      // Network failure: keep whatever we have
     }
   }, [clearUser]);
 

@@ -38,7 +38,6 @@ export async function POST(req: Request) {
           );
         }
       } catch {
-        // If admin check fails, fall back to generic invalid credentials
       }
 
       return NextResponse.json(

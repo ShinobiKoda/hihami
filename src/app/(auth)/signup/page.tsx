@@ -43,10 +43,9 @@ export default function Page() {
 
       const json = (await res.json()) as {
         ok: boolean;
-        uid?: string;
         error?: string;
       };
-      if (!res.ok || !json.ok || !json.uid) {
+      if (!res.ok || !json.ok) {
         if (res.status === 409) {
           setServerError(
             (json.error ?? "This email is already registered.") +
@@ -58,7 +57,7 @@ export default function Page() {
         return;
       }
 
-      const params = new URLSearchParams({ uid: json.uid, email: data.email });
+      const params = new URLSearchParams({ email: data.email });
       router.push(`/verify-email?${params.toString()}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Network error";

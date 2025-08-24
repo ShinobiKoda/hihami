@@ -15,7 +15,7 @@ export default function Page() {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const search = useSearchParams();
   const email = search.get("email");
-  const uid = search.get("uid");
+  // uid removed in new flow; we use a pending signup cookie on the server
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -57,17 +57,14 @@ export default function Page() {
     setServerError(null);
     const joined = code.join("");
     if (joined.length !== 4) return;
-    if (!uid) {
-      setServerError("Missing user id. Please restart signup.");
-      return;
-    }
+    // uid not required; server reads pending_signup cookie
 
     try {
       setSubmitting(true);
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid, otp: joined }),
+        body: JSON.stringify({ otp: joined }),
       });
       const json = (await res.json()) as { message?: string; error?: string };
       if (!res.ok) {
