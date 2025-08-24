@@ -102,3 +102,20 @@ export const scaleOnHover: Variants = {
     },
   },
 };
+
+export const overlayFade: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2, ease: "easeOut" } },
+};
+
+export const sidebarSlide: Variants = {
+  hidden: { x: "100%" },
+  visible: {
+    x: "0%",
+    transition: {
+      type: "spring",
+      stiffness: 280,
+      damping: 30,
+    },
+  },
+};
