@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import {
   sidebarSlide,
@@ -9,6 +10,7 @@ import {
   staggerChildren,
   fadeInUp,
 } from "../../components/animations/motion";
+import { useUser } from "@/app/context/UserContext";
 
 type MobileSidebarProps = {
   open: boolean;
@@ -16,10 +18,8 @@ type MobileSidebarProps = {
 };
 
 export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
-  const [me, setMe] = useState<{
-    email: string;
-    username: string | null;
-  } | null>(null);
+  const { user: me, refreshUser } = useUser();
+  const router = useRouter();
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -30,25 +30,8 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
   }, [open, onClose]);
 
   useEffect(() => {
-    let mounted = true;
-    if (!open) return;
-    (async () => {
-      try {
-        const res = await fetch("/api/me", { cache: "no-store" });
-        if (!res.ok) return;
-        const json = (await res.json()) as {
-          ok: boolean;
-          data?: { email: string; username: string | null };
-        };
-        if (mounted && json.ok && json.data) setMe(json.data);
-      } catch {
-        // ignore
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [open]);
+    if (open) void refreshUser();
+  }, [open, refreshUser]);
 
   return (
     <AnimatePresence>
@@ -140,6 +123,23 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
                   Connect Wallet
                 </button>
               </motion.div>
+
+              <div className="h-px bg-white/10 my-4" />
+
+              <motion.button
+                variants={fadeInUp}
+                onClick={async () => {
+                  try {
+                    await fetch("/api/auth/signout", { method: "POST" });
+                  } finally {
+                    onClose();
+                    router.replace("/login");
+                  }
+                }}
+                className="w-full text-left rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-3 text-red-300"
+              >
+                Sign out
+              </motion.button>
             </motion.nav>
 
             <div className="mt-auto" />

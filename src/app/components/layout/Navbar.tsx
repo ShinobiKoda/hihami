@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import {
   fadeInDown,
@@ -11,6 +12,7 @@ import {
   slideInFromRight,
 } from "../animations/motion";
 import { MobileSidebar } from "./MobileSidebar";
+import { useUser } from "@/app/context/UserContext";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -18,28 +20,12 @@ export function Navbar() {
   const closeMenu = useCallback(() => setOpen(false), []);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
-  const [me, setMe] = useState<{
-    email: string;
-    username: string | null;
-  } | null>(null);
+  const router = useRouter();
+  const { user: me, refreshUser, clearUser } = useUser();
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const res = await fetch("/api/me", { cache: "no-store" });
-        if (!res.ok) return;
-        const json = (await res.json()) as {
-          ok: boolean;
-          data?: { email: string; username: string | null };
-        };
-        if (mounted && json.ok && json.data) setMe(json.data);
-      } catch {}
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    if (profileOpen) void refreshUser();
+  }, [profileOpen, refreshUser]);
 
   useEffect(() => {
     if (open) {
@@ -70,6 +56,14 @@ export function Navbar() {
       window.removeEventListener("keydown", onKey);
     };
   }, [profileOpen]);
+
+  const onSignOut = async () => {
+    try {
+      await fetch("/api/auth/signout", { method: "POST" });
+    } catch {}
+    clearUser();
+    router.replace("/login");
+  };
 
   return (
     <motion.nav
@@ -190,7 +184,10 @@ export function Navbar() {
                 <ul className="mt-3 space-y-2 text-sm *:rounded-md *:px-3 *:py-2">
                   <li className="hover:bg-white/10 cursor-pointer">Profile</li>
                   <li className="hover:bg-white/10 cursor-pointer">Settings</li>
-                  <li className="hover:bg-white/10 cursor-pointer text-red-300">
+                  <li
+                    className="hover:bg-white/10 cursor-pointer text-red-300"
+                    onClick={onSignOut}
+                  >
                     Sign out
                   </li>
                 </ul>
