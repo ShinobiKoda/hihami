@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "./components/animations/toast";
+import { Oxanium } from "next/font/google";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
-  style: ["normal", "italic"],
+
+const oxanium = Oxanium({
+  variable: "--font-oxanium",
+  style: ["normal"],
+  weight: ["200", "300", "400", "500","600", "700", "800"]
 });
 
+
 export const metadata: Metadata = {
-  title: "Enefty | Homepage",
+  title: "HIHAMI | Homepage",
   description: "NFT Marketplace",
   icons: {
     icon: "/images/logo.svg",
@@ -25,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>
+      <body className={`${oxanium.variable} antialiased`}>
         {children}
         <ToastProvider />
       </body>

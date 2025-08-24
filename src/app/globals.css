@@ -1,1 +1,89 @@
 @import "tailwindcss";
+
+/* Cyberpunk-styled button */
+.cyber-btn {
+  position: relative;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid #8a2be2;
+  background: linear-gradient(
+    135deg,
+    rgba(173, 26, 175, 0.9) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  box-shadow: 0 0 0.5rem rgba(173, 26, 175, 0.7),
+    inset 0 0 0.5rem rgba(173, 26, 175, 0.4),
+    0 0 1.2rem rgba(26, 209, 255, 0.35);
+  border-radius: 10px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cyber-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    rgba(26, 209, 255, 0.6),
+    rgba(173, 26, 175, 0.8),
+    rgba(26, 209, 255, 0.6)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.cyber-btn::after {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -50%;
+  width: 60%;
+  height: 400%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.22) 45%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  transform: rotate(20deg);
+  animation: sweep 3.8s linear infinite;
+  pointer-events: none;
+}
+
+.cyber-btn:hover {
+  box-shadow: 0 0 0.65rem rgba(173, 26, 175, 0.9),
+    inset 0 0 0.65rem rgba(173, 26, 175, 0.55),
+    0 0 1.5rem rgba(26, 209, 255, 0.55);
+  filter: saturate(1.2);
+}
+
+.cyber-btn:active {
+  transform: translateY(1px) scale(0.995);
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-120%) rotate(20deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(260%) rotate(20deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(260%) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* Removed glossy sweep animations for links */
