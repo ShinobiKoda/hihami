@@ -87,7 +87,7 @@ export function Navbar() {
       variants={fadeInDown}
       initial="hidden"
       animate="visible"
-      className="w-full max-w-[1440px] mx-auto p-4 lg:pt-4 flex items-center justify-between"
+      className="relative z-50 w-full max-w-[1440px] mx-auto p-4 lg:pt-4 flex items-center justify-between"
     >
       <motion.div className="flex items-center" variants={slideInFromLeft}>
         <Image
@@ -185,7 +185,7 @@ export function Navbar() {
                   damping: 30,
                   mass: 0.6,
                 }}
-                className="absolute right-0 mt-2 w-72 rounded-xl border border-white/10 bg-gradient-to-b from-[#0c0c12]/95 to-[#131320]/95 text-white shadow-2xl p-4"
+                className="absolute right-0 mt-2 w-72 rounded-xl border border-white/10 bg-gradient-to-b from-[#0c0c12]/95 to-[#131320]/95 text-white shadow-2xl p-4 z-[60]"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-white overflow-hidden flex items-center justify-center">
