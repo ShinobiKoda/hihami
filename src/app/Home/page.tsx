@@ -2,6 +2,7 @@
 import { Navbar } from "../components/layout/Navbar";
 import Carousel3D from "../components/Carousel3D";
 import CarouselHorizontal from "../components/CarouselHorizontal";
+import Image from "next/image";
 import { motion } from "motion/react";
 import {
   fadeInDown,
@@ -9,6 +10,7 @@ import {
   fadeInUp,
   staggerChildren,
   scaleOnHover,
+  zoomIn,
 } from "../components/animations/motion";
 
 const nfts = [
@@ -32,9 +34,32 @@ const nfts = [
   },
 ];
 
+const supportedWallets = [
+  {
+    image: "/images/alpha.svg",
+    name: "Alpha",
+  },
+  {
+    image: "/images/binance.svg",
+    name: "Binance",
+  },
+  {
+    image: "/images/coingecko.svg",
+    name: "CoinGecko",
+  },
+  {
+    image: "/images/metamask.svg",
+    name: "MetaMask",
+  },
+  {
+    image: "/images/trust-wallet.svg",
+    name: "Trust Wallet",
+  },
+];
+
 export default function HomePage() {
   return (
-    <div className="w-full min-h-screen bg-[#140C1F] text-white">
+    <div className="w-full min-h-full bg-[#140C1F] text-white">
       <Navbar />
 
       <div className="w-full max-w-[1440px] mx-auto p-4">
@@ -110,6 +135,70 @@ export default function HomePage() {
             <Carousel3D items={nfts} />
           </motion.div>
         </div>
+      </div>
+
+      <div className="w-full">
+        <Image
+          src="/images/milky-way.svg"
+          alt="Milky Way Image"
+          width={100}
+          height={100}
+          className="w-full"
+        />
+      </div>
+
+      <div className="w-full max-w-[1440px] p-4 mx-auto text-center">
+        <motion.h3
+          className="font-normal lg:text-[25px] text-lg hidden lg:block bg-gradient-to-r from-[#AD1AAF] via-[#D946EF] to-[#6E56CF] bg-clip-text text-transparent"
+          variants={fadeIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          Trade With the World&apos;s Most Trusted And Fastest Wallet
+        </motion.h3>
+        <motion.h2
+          className="font-medium lg:text-[100px] text-4xl lg:mb-[100px] mb-10"
+          variants={fadeInDown}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          Wallets We Support
+        </motion.h2>
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-5 gap-[20px]"
+          variants={staggerChildren}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {supportedWallets.map((wallet, index) => (
+            <motion.div
+              key={index}
+              variants={fadeInUp}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="rounded-[15px] flex flex-col gap-[34px] items-center justify-center bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] min-h-[322px]"
+            >
+              <motion.div
+                className="w-[203px] h-[203px] p-10 rounded-full bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)]"
+                variants={zoomIn}
+              >
+                <Image
+                  src={wallet.image}
+                  alt="Wallet Image"
+                  width={100}
+                  height={100}
+                  className="w-full"
+                />
+              </motion.div>
+              <motion.p className="font-medium text-xl" variants={fadeIn}>
+                {wallet.name}
+              </motion.p>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </div>
   );
