@@ -172,12 +172,12 @@ function VerifyEmailClient() {
             whileTap="tap"
           >
             {submitting ? (
-              <span>
+              <span className="flex items-center justify-center w-full gap-4">
                 <ClipLoader color="white" />
                 Verifying....
               </span>
             ) : (
-              "Verify"
+              <span className="w-full text-center flex items-center justify-center">Verify</span>
             )}
           </motion.button>
         </motion.form>
