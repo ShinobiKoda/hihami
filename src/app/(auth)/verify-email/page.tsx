@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
@@ -12,6 +12,15 @@ import { ClipLoader } from "react-spinners";
 import Image from "next/image";
 
 export default function Page() {
+  // Wrap child that reads search params in Suspense per Next.js guidance
+  return (
+    <Suspense fallback={null}>
+      <VerifyEmailClient />
+    </Suspense>
+  );
+}
+
+function VerifyEmailClient() {
   const [code, setCode] = useState(["", "", "", ""]);
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const search = useSearchParams();
@@ -162,7 +171,14 @@ export default function Page() {
             whileHover="hover"
             whileTap="tap"
           >
-            {submitting ? <span><ClipLoader color="white"/>Verifying....</span> : "Verify"}
+            {submitting ? (
+              <span>
+                <ClipLoader color="white" />
+                Verifying....
+              </span>
+            ) : (
+              "Verify"
+            )}
           </motion.button>
         </motion.form>
       </motion.div>

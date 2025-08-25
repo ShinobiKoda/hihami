@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +25,15 @@ const schema = z
 type Form = z.infer<typeof schema>;
 
 export default function ResetPasswordPage() {
+  // Wrap the client logic that uses useSearchParams in Suspense per Next.js guidance
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordClient />
+    </Suspense>
+  );
+}
+
+function ResetPasswordClient() {
   const router = useRouter();
   const search = useSearchParams();
   const [error, setError] = useState<string | null>(null);
