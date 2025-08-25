@@ -119,3 +119,66 @@ export const sidebarSlide: Variants = {
     },
   },
 };
+
+// 3D/Circular carousel helpers
+export const carouselItemEnter: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.35, ease: "easeOut" },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: { duration: 0.25, ease: "easeIn" },
+  },
+};
+
+export const carouselTransition = {
+  type: "spring" as const,
+  stiffness: 140,
+  damping: 18,
+  mass: 0.6,
+};
+
+export const carouselRing: Variants = {
+  left: {
+    x: "-50%",
+    y: "6%",
+    scale: 0.86,
+    opacity: 0.65,
+    zIndex: 1,
+    transition: carouselTransition,
+  },
+  center: {
+    x: "0%",
+    y: "-30%",
+    scale: 1,
+    opacity: 1,
+    zIndex: 3,
+    transition: carouselTransition,
+  },
+  right: {
+    x: "50%",
+    y: "6%",
+    scale: 0.9,
+    opacity: 0.8,
+    zIndex: 2,
+    transition: carouselTransition,
+  },
+  back: {
+    x: "0%",
+    y: "62%",
+    scale: 0.8,
+    opacity: 0,
+    zIndex: 0,
+    transition: carouselTransition,
+  },
+};
+
+export const hCarouselSlide: Variants = {
+  enter: { x: "100%", opacity: 0 },
+  center: { x: "0%", opacity: 1, transition: carouselTransition },
+  exit: { x: "-100%", opacity: 0, transition: carouselTransition },
+};

@@ -104,7 +104,7 @@ export function Navbar() {
         variants={staggerChildren}
         initial="hidden"
         animate="visible"
-        className="hidden lg:flex items-center gap-[50px] font-normal text-base py-[28px] px-[50px] *:hover:opacity-90 *:cursor-pointer"
+        className="hidden lg:flex items-center gap-[50px] font-normal text-base *:hover:opacity-90 *:cursor-pointer"
       >
         <motion.li variants={fadeInUp}>
           <Link href="#">EXPLORE</Link>
@@ -132,7 +132,7 @@ export function Navbar() {
             alt="Connect Wallet Btn"
             width={100}
             height={100}
-            className="w-full"
+            className="w-[180px]"
           />
         </motion.div>
         <button
