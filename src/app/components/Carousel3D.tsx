@@ -38,7 +38,7 @@ function slotForIndex(
 
 export default function Carousel3D({
   items,
-  intervalMs = 2500,
+  intervalMs = 5000,
   className,
 }: Props) {
   const [active, setActive] = React.useState(0);
