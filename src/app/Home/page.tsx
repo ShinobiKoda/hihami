@@ -62,8 +62,8 @@ export default function HomePage() {
     <div className="w-full min-h-full bg-[#140C1F] text-white">
       <Navbar />
 
-      <div className="w-full max-w-[1440px] mx-auto p-4">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+      <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
+        <div className="grid xl:grid-cols-2 gap-8 lg:gap-12 items-start">
           <motion.div
             className="w-full max-w-[718px] lg:mt-[147px]"
             variants={staggerChildren}
@@ -98,7 +98,7 @@ export default function HomePage() {
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
                 <span className="border px-8 py-4 bg-[#AD1AAF] border-[#AD1AAF] text-center flex items-center justify-center font-medium lg:text-[22px] text-base text-nowrap">
-                  Explore More
+                  Explore
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               </motion.button>
@@ -121,7 +121,7 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
           <motion.div
-            className="mt-10 block lg:hidden"
+            className="mt-10 block xl:hidden"
             variants={fadeInUp}
             initial="hidden"
             animate="visible"
@@ -129,7 +129,7 @@ export default function HomePage() {
             <CarouselHorizontal items={nfts} />
           </motion.div>
           <motion.div
-            className="mt-10 lg:mt-[257px] hidden lg:block"
+            className="mt-10 lg:mt-[257px] hidden xl:block"
             variants={fadeInUp}
             initial="hidden"
             animate="visible"
@@ -144,7 +144,7 @@ export default function HomePage() {
         style={{ backgroundImage: "url('/images/milky-way.svg')" }}
       ></div> */}
 
-      <div className="w-full max-w-[1440px] p-4 mx-auto text-center mt-20">
+      <div className="w-full max-w-[1440px] p-4 mx-auto text-center mt-20 lg:px-12 md:px-8">
         <motion.h3
           className="font-normal lg:text-[25px] text-lg hidden lg:block bg-gradient-to-r from-[#AD1AAF] via-[#D946EF] to-[#6E56CF] bg-clip-text text-transparent"
           variants={fadeIn}
@@ -164,7 +164,7 @@ export default function HomePage() {
           Wallets We Support
         </motion.h2>
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-5 gap-[20px]"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-[20px]"
           variants={staggerChildren}
           initial="hidden"
           whileInView="visible"

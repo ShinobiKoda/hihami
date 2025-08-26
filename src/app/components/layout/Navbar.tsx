@@ -88,7 +88,7 @@ export function Navbar() {
       variants={fadeInDown}
       initial="hidden"
       animate="visible"
-      className="relative z-50 w-full max-w-[1440px] mx-auto p-4 lg:pt-4 flex items-center justify-between"
+      className="relative z-50 w-full max-w-[1440px] mx-auto p-4 lg:pt-4 flex items-center justify-between lg:px-12 md:px-8"
     >
       <motion.div className="flex items-center" variants={slideInFromLeft}>
         <Image
@@ -105,7 +105,7 @@ export function Navbar() {
         variants={staggerChildren}
         initial="hidden"
         animate="visible"
-        className="hidden lg:flex items-center gap-[50px] font-normal text-base *:hover:opacity-90 *:cursor-pointer"
+        className="hidden xl:flex items-center gap-[50px] font-normal text-base lg:text-xl *:hover:opacity-90 *:cursor-pointer"
       >
         <motion.li variants={fadeInUp}>
           <Link href="#">EXPLORE</Link>
@@ -133,13 +133,13 @@ export function Navbar() {
             alt="Connect Wallet Btn"
             width={100}
             height={100}
-            className="w-[180px]"
+            className="w-[180px] md:w-[200px]"
           />
         </motion.div>
         <button
           aria-label="Open menu"
           onClick={openMenu}
-          className="lg:hidden w-10 h-10 rounded-full bg-white flex items-center justify-center hover:opacity-85"
+          className="xl:hidden w-10 h-10 rounded-full bg-white flex items-center justify-center hover:opacity-85"
         >
           {avatarError ? (
             <FaRegUser className="w-6 h-6 text-[#160430]" />
@@ -155,7 +155,7 @@ export function Navbar() {
           )}
         </button>
 
-        <div className="relative hidden lg:block" ref={profileRef}>
+        <div className="relative hidden xl:block" ref={profileRef}>
           <button
             aria-label="Open profile"
             onClick={() => setProfileOpen((v) => !v)}

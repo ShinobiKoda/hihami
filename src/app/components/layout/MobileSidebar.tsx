@@ -54,7 +54,7 @@ export function MobileSidebar({
             role="button"
             aria-label="Close menu"
             tabIndex={-1}
-            className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            className="xl:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
             variants={overlayFade}
             initial="hidden"
             animate="visible"
@@ -63,7 +63,7 @@ export function MobileSidebar({
           />
 
           <motion.aside
-            className="lg:hidden fixed right-0 top-0 z-50 h-dvh w-[84vw] max-w-[360px] shadow-xl border-l border-white/10 bg-gradient-to-b from-[#0c0c12]/95 to-[#131320]/95 text-white"
+            className="xl:hidden fixed right-0 top-0 z-50 h-dvh w-[84vw] max-w-[360px] shadow-xl border-l border-white/10 bg-gradient-to-b from-[#0c0c12]/95 to-[#131320]/95 text-white"
             variants={sidebarSlide}
             initial="hidden"
             animate="visible"
