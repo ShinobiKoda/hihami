@@ -12,6 +12,10 @@ import {
   scaleOnHover,
   zoomIn,
 } from "../components/animations/motion";
+import { TfiWallet } from "react-icons/tfi";
+import { BsCollection } from "react-icons/bs";
+import { MdOutlineHexagon } from "react-icons/md";
+import { MdAddToPhotos } from "react-icons/md";
 
 const nfts = [
   {
@@ -98,7 +102,7 @@ export default function HomePage() {
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
                 <span className="border px-8 py-4 bg-[#AD1AAF] border-[#AD1AAF] text-center flex items-center justify-center font-medium lg:text-[22px] text-base text-nowrap">
-                  Explore
+                  EXPLORE
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               </motion.button>
@@ -138,7 +142,7 @@ export default function HomePage() {
           </motion.div>
         </div>
       </div>
-{/* 
+      {/* 
       <div
         className="w-full h-[300px] bg-center bg-cover"
         style={{ backgroundImage: "url('/images/milky-way.svg')" }}
@@ -146,7 +150,7 @@ export default function HomePage() {
 
       <div className="w-full max-w-[1440px] p-4 mx-auto text-center mt-20 lg:px-12 md:px-8">
         <motion.h3
-          className="font-normal lg:text-[25px] text-lg hidden lg:block bg-gradient-to-r from-[#AD1AAF] via-[#D946EF] to-[#6E56CF] bg-clip-text text-transparent"
+          className="font-normal lg:text-[25px] text-lg hidden lg:block bg-gradient-to-r from-[#AD1AAF] via-[#D946EF] to-[#6E56CF] bg-clip-text text-transparent lg:mb-32"
           variants={fadeIn}
           initial="hidden"
           whileInView="visible"
@@ -155,7 +159,7 @@ export default function HomePage() {
           Trade With the World&apos;s Most Trusted And Fastest Wallet
         </motion.h3>
         <motion.h2
-          className="font-medium lg:text-[100px] text-4xl lg:mb-[100px] mb-10"
+          className="font-medium lg:text-[64px] text-4xl lg:mb-[50px] mb-10"
           variants={fadeInDown}
           initial="hidden"
           whileInView="visible"
@@ -195,6 +199,95 @@ export default function HomePage() {
               </motion.p>
             </motion.div>
           ))}
+        </motion.div>
+      </div>
+
+      <div className="mt-10 w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
+        <motion.h2
+          className="w-full text-center font-medium text-4xl lg:text-[64px] mb-16"
+          variants={fadeInDown}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          How it Works
+        </motion.h2>
+        <motion.div
+          className="flex flex-col xl:flex-row items-center justify-between gap-[80px]"
+          variants={staggerChildren}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <motion.div
+            className="space-y-[30px] flex flex-col items-center"
+            variants={fadeInUp}
+          >
+            <div className="w-[106px] h-[106px] rounded-full bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] flex items-center justify-center">
+              <TfiWallet size={48} color="#F81DFB" />
+            </div>
+            <p className="text-center font-normal text-2xl">
+              Set Up Your Wallet
+            </p>
+          </motion.div>
+          <motion.div variants={fadeInDown}>
+            <Image
+              src="/images/how-it-works-arrow.svg"
+              alt="Arrow"
+              width={100}
+              height={100}
+              className="max-w-[166px] rotate-90 xl:rotate-0 transition-transform"
+            />
+          </motion.div>
+          <motion.div
+            className="space-y-[30px] flex flex-col items-center"
+            variants={fadeInUp}
+          >
+            <div className="w-[106px] h-[106px] rounded-full bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] flex items-center justify-center">
+              <BsCollection size={48} color="#F81DFB" />
+            </div>
+            <p className="text-center font-normal text-2xl">
+              Create Your Collection
+            </p>
+          </motion.div>
+          <motion.div variants={fadeInDown}>
+            <Image
+              src="/images/how-it-works-arrow.svg"
+              alt="Arrow"
+              width={100}
+              height={100}
+              className="max-w-[166px] rotate-90 xl:rotate-0 transition-transform"
+            />
+          </motion.div>
+          <motion.div
+            className="space-y-[30px] flex flex-col items-center"
+            variants={fadeInUp}
+          >
+            <div className="w-[106px] h-[106px] rounded-full bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] flex items-center justify-center">
+              <MdAddToPhotos size={48} color="#F81DFB" />
+            </div>
+            <p className="text-center font-normal text-2xl">Add Your NFTs</p>
+          </motion.div>
+          <motion.div variants={fadeInDown}>
+            <Image
+              src="/images/how-it-works-arrow.svg"
+              alt="Arrow"
+              width={100}
+              height={100}
+              className="max-w-[166px] rotate-90 xl:rotate-0 transition-transform"
+            />
+          </motion.div>
+          <motion.div
+            className="space-y-[30px] flex flex-col items-center"
+            variants={fadeInUp}
+          >
+            <div className="w-[106px] h-[106px] rounded-full bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] flex items-center justify-center">
+              <MdOutlineHexagon size={48} color="#F81DFB" />
+            </div>
+            <p className="text-center font-normal text-2xl">
+              List them For Sale
+            </p>
+          </motion.div>
         </motion.div>
       </div>
     </div>
