@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ export function MobileSidebar({
 }: MobileSidebarProps) {
   const { user: me, refreshUser } = useUser();
   const router = useRouter();
+  const [isSpinning, setIsSpinning] = useState(false);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -71,7 +72,6 @@ export function MobileSidebar({
             <div className="px-5 pt-6 pb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden">
-                
                   <Image
                     src={avatarUrl}
                     alt="avatar"
@@ -103,10 +103,24 @@ export function MobileSidebar({
               </div>
               <button
                 aria-label="Refresh avatar"
-                onClick={onRandomizeSeed}
+                onClick={() => {
+                  onRandomizeSeed();
+                  setIsSpinning(true);
+                  window.setTimeout(() => setIsSpinning(false), 600);
+                }}
                 className="rounded-md p-2 text-white/80 hover:text-white hover:bg-white/10 transition mr-1"
               >
-                <FiRefreshCw className="w-4 h-4" />
+                <motion.div
+                  key={isSpinning ? "spin" : "idle"}
+                  initial={{ rotate: 0 }}
+                  animate={isSpinning ? { rotate: 360 } : { rotate: 0 }}
+                  transition={{
+                    duration: isSpinning ? 0.6 : 0,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <FiRefreshCw className="w-4 h-4" />
+                </motion.div>
               </button>
               <button
                 aria-label="Close"

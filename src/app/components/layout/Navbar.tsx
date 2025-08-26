@@ -23,6 +23,7 @@ export function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [avatarSeed, setAvatarSeed] = useState<string>("p");
   const [avatarError, setAvatarError] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const { user: me, refreshUser, clearUser } = useUser();
@@ -158,7 +159,7 @@ export function Navbar() {
           <button
             aria-label="Open profile"
             onClick={() => setProfileOpen((v) => !v)}
-            className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:opacity-85"
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:opacity-85 cursor-pointer"
           >
             {avatarError ? (
               <FaRegUser className="w-6 h-6 text-[#160430]" />
@@ -188,7 +189,7 @@ export function Navbar() {
                 className="absolute right-0 mt-2 w-72 rounded-xl border border-white/10 bg-gradient-to-b from-[#0c0c12]/95 to-[#131320]/95 text-white shadow-2xl p-4 z-[60]"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white overflow-hidden flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-white overflow-hidden flex items-center justify-center cursor-pointer">
                     {avatarError ? (
                       <FaRegUser className="w-5 h-5 text-[#160430]" />
                     ) : (
@@ -212,10 +213,26 @@ export function Navbar() {
                   </div>
                   <button
                     aria-label="Refresh avatar"
-                    onClick={randomizeSeed}
-                    className="ml-2 rounded-md p-2 text-white/75 hover:text-white hover:bg-white/10 transition"
+                    onClick={() => {
+                      randomizeSeed();
+                      setIsSpinning(true);
+                      window.setTimeout(() => {
+                        setIsSpinning(false);
+                      }, 600);
+                    }}
+                    className="ml-2 rounded-md p-2 text-white/75 hover:text-white hover:bg-white/10 transition cursor-pointer"
                   >
-                    <FiRefreshCw className="w-4 h-4" />
+                    <motion.div
+                      key={isSpinning ? "spin" : "idle"}
+                      initial={{ rotate: 0 }}
+                      animate={isSpinning ? { rotate: 360 } : { rotate: 0 }}
+                      transition={{
+                        duration: isSpinning ? 0.6 : 0,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <FiRefreshCw className="w-4 h-4" />
+                    </motion.div>
                   </button>
                 </div>
                 <div className="mt-3 h-px bg-white/10" />

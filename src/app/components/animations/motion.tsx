@@ -182,3 +182,4 @@ export const hCarouselSlide: Variants = {
   center: { x: "0%", opacity: 1, transition: carouselTransition },
   exit: { x: "-100%", opacity: 0, transition: carouselTransition },
 };
+

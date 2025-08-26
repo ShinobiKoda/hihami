@@ -85,7 +85,7 @@ export default function HomePage() {
               Hihami is the World&apos; First and Largest NFT/Avatar Marketplace
             </motion.p>
             <motion.div
-              className="flex items-center gap-10"
+              className="flex items-center gap-6 lg:gap-10"
               variants={fadeInUp}
             >
               <motion.button
@@ -97,7 +97,7 @@ export default function HomePage() {
                 whileTap="tap"
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-                <span className="border px-8 py-4 bg-[#AD1AAF] border-[#AD1AAF] text-center flex items-center justify-center font-medium lg:text-[22px] text-base">
+                <span className="border px-8 py-4 bg-[#AD1AAF] border-[#AD1AAF] text-center flex items-center justify-center font-medium lg:text-[22px] text-base text-nowrap">
                   Explore More
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
@@ -111,8 +111,10 @@ export default function HomePage() {
                 whileTap="tap"
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-                <span className="px-8 lg:px-12 py-4 border border-[#AD1AAF] text-center flex items-center justify-center font-medium text-base lg:text-[22px]">
-                  Create
+                <span className="button-48 px-8 lg:px-12 py-4">
+                  <span className="text font-medium text-base lg:text-[22px]">
+                    Create
+                  </span>
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               </motion.button>
@@ -136,18 +138,13 @@ export default function HomePage() {
           </motion.div>
         </div>
       </div>
+{/* 
+      <div
+        className="w-full h-[300px] bg-center bg-cover"
+        style={{ backgroundImage: "url('/images/milky-way.svg')" }}
+      ></div> */}
 
-      <div className="w-full">
-        <Image
-          src="/images/milky-way.svg"
-          alt="Milky Way Image"
-          width={100}
-          height={100}
-          className="w-full"
-        />
-      </div>
-
-      <div className="w-full max-w-[1440px] p-4 mx-auto text-center">
+      <div className="w-full max-w-[1440px] p-4 mx-auto text-center mt-20">
         <motion.h3
           className="font-normal lg:text-[25px] text-lg hidden lg:block bg-gradient-to-r from-[#AD1AAF] via-[#D946EF] to-[#6E56CF] bg-clip-text text-transparent"
           variants={fadeIn}

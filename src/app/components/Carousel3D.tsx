@@ -83,7 +83,7 @@ export default function Carousel3D({
               >
                 <div
                   className={
-                    "rounded-[41.67px] max-w-[321px] p-3 bg-white/10 border border-white/20 backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_30px_rgba(0,0,0,0.12)] min-h-[397px] pt-5" +
+                    "rounded-[41.67px] max-w-[321px] p-3 bg-white/10 border border-white/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_30px_rgba(0,0,0,0.12)] min-h-[397px] pt-5" +
                     (isCenter ? " scale-100" : "")
                   }
                 >
