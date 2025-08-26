@@ -2,6 +2,7 @@
 import { Navbar } from "../components/layout/Navbar";
 import Carousel3D from "../components/Carousel3D";
 import CarouselHorizontal from "../components/CarouselHorizontal";
+import Coverflow from "../components/Coverflow";
 import Image from "next/image";
 import { motion } from "motion/react";
 import {
@@ -35,6 +36,44 @@ const nfts = [
     name: "Statue of Vughae",
     alt: "Statue of vughae NFT",
     price: 452968.17,
+  },
+];
+
+const nftCollection = [
+  {
+    name: "Monkey Ape",
+    image: "/images/monkey-ape.svg",
+    alt: "Monkey Ape NFT",
+  },
+  {
+    name: "Moon Fall",
+    image: "/images/moon-fall.svg",
+    alt: "Moon Fall NFT",
+  },
+  {
+    name: "Racer to Go",
+    image: "/images/racer-to-go.svg",
+    alt: "Racer to Go NFT",
+  },
+  {
+    name: "Sleeping Beauty",
+    image: "/images/sleeping-beauty.svg",
+    alt: "Sleeping Beauty NFT",
+  },
+  {
+    name: "Statue of Vughae",
+    image: "/images/statue-of-vughae.svg",
+    alt: "Statue of Vughae",
+  },
+  {
+    name: "Swagger Ape",
+    image: "/images/swagger-ape.svg",
+    alt: "Swagger Ape NFT",
+  },
+  {
+    name: "Wired Human",
+    image: "/images/wired-human.svg",
+    alt: "Wired Human NFT",
   },
 ];
 
@@ -150,7 +189,7 @@ export default function HomePage() {
 
       <div className="w-full max-w-[1440px] p-4 mx-auto text-center mt-20 lg:px-12 md:px-8">
         <motion.h3
-          className="font-normal lg:text-[25px] text-lg hidden lg:block bg-gradient-to-r from-[#AD1AAF] via-[#D946EF] to-[#6E56CF] bg-clip-text text-transparent lg:mb-32"
+          className="font-normal lg:text-[25px] text-lg bg-gradient-to-r from-[#AD1AAF] via-[#D946EF] to-[#6E56CF] bg-clip-text text-transparent mb-24 lg:mb-32"
           variants={fadeIn}
           initial="hidden"
           whileInView="visible"
@@ -202,7 +241,7 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      <div className="mt-10 w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
+      <div className="mt-10 lg:mt-20 w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
         <motion.h2
           className="w-full text-center font-medium text-4xl lg:text-[64px] mb-16"
           variants={fadeInDown}
@@ -289,6 +328,33 @@ export default function HomePage() {
             </p>
           </motion.div>
         </motion.div>
+      </div>
+
+      <div className="mt-10 lg:mt-20 p-4 lg:px-12 md:px-8">
+        <h3 className="bg-[linear-gradient(90.126deg,#FFFFFF_0%,#F81DFB_100%)] bg-clip-text text-transparent font-medium text-2xl md:text-3xl text-center lg:my-32 my-24">
+          Explore Our Newly Released NFT Collection
+        </h3>
+        <div>
+          <h2 className="w-full text-center font-medium text-4xl lg:text-[64px] mb-16">
+            Our Collection
+          </h2>
+          {/* Mobile (<= xl) horizontal carousel */}
+          <div className="xl:hidden">
+            <CarouselHorizontal
+              items={nftCollection}
+              intervalMs={3000}
+              className="px-2"
+              glossy={false}
+            />
+          </div>
+          <div className="hidden xl:block">
+            <Coverflow items={nftCollection} className="px-4" />
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-10">
+        
       </div>
     </div>
   );

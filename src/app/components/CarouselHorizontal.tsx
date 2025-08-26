@@ -15,12 +15,14 @@ type Props = {
   items: Item[];
   intervalMs?: number;
   className?: string;
+  glossy?: boolean; // toggle glossy card background
 };
 
 export default function CarouselHorizontal({
   items,
   intervalMs = 5000,
   className,
+  glossy = true,
 }: Props) {
   const [index, setIndex] = React.useState(0);
   const [hover, setHover] = React.useState(false);
@@ -56,7 +58,13 @@ export default function CarouselHorizontal({
               exit="exit"
               className="w-full flex items-center justify-center"
             >
-              <div className="rounded-[41.67px] max-w-[321px] p-3 bg-white/10 border border-white/20 backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_30px_rgba(0,0,0,0.12)] min-h-[397px]">
+              <div
+                className={
+                  glossy
+                    ? "rounded-[41.67px] max-w-[321px] p-3 bg-white/10 border border-white/20 backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_30px_rgba(0,0,0,0.12)] min-h-[397px]"
+                    : "max-w-[340px]"
+                }
+              >
                 <Image
                   src={current?.image ?? ""}
                   alt={current?.alt ?? "NFT"}
