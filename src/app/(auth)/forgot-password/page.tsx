@@ -126,6 +126,18 @@ export default function Page() {
                 "Send Reset Link"
               )}
             </motion.button>
+
+            <motion.button
+              type="button"
+              aria-label="Return to sign in"
+              onClick={() => router.push("/login")}
+              className="mt-2 text-white font-medium text-base lg:text-xl py-3 rounded-md cursor-pointer border border-[#3B2063] bg-transparent hover:bg-[#3B2063] transition-colors text-center"
+              variants={scaleOnHover}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Return to Sign In
+            </motion.button>
           </motion.form>
         </div>
       </motion.div>

@@ -128,7 +128,8 @@ export default function HomePage() {
               Hihami is the World&apos; First and Largest NFT/Avatar Marketplace
             </motion.p>
             <motion.div
-              className="flex items-center gap-6 lg:gap-10"
+              className="flex flex-col
+               gap-6 lg:gap-10 w-full sm:flex-row max-w-xl"
               variants={fadeInUp}
             >
               <motion.button
@@ -140,7 +141,7 @@ export default function HomePage() {
                 whileTap="tap"
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-                <span className="border px-8 py-4 bg-[#AD1AAF] border-[#AD1AAF] text-center flex items-center justify-center font-medium lg:text-[22px] text-base text-nowrap">
+                <span className="border px-8 py-4 bg-[#AD1AAF] border-[#AD1AAF] text-center flex items-center justify-center font-medium lg:text-[22px] text-base text-nowrap w-full">
                   EXPLORE
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
@@ -154,7 +155,7 @@ export default function HomePage() {
                 whileTap="tap"
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-                <span className="button-48 px-8 lg:px-12 py-4">
+                <span className="button-48 px-8 lg:px-12 py-4 w-full">
                   <span className="text font-medium text-base lg:text-[22px]">
                     Create
                   </span>
@@ -181,11 +182,6 @@ export default function HomePage() {
           </motion.div>
         </div>
       </div>
-      {/* 
-      <div
-        className="w-full h-[300px] bg-center bg-cover"
-        style={{ backgroundImage: "url('/images/milky-way.svg')" }}
-      ></div> */}
 
       <div className="w-full max-w-[1440px] p-4 mx-auto text-center mt-20 lg:px-12 md:px-8">
         <motion.h3
@@ -353,9 +349,19 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="pt-10">
-        
+      <div className="mt-10 lg:mt-20 p-4 lg:px-12 md:px-8 w-full max-w-[1440px] mx-auto">
+        <h3 className="font-light text-base lg:text-[25px]">Most Appreciated NFTs On Sale for the day</h3>
+        <div>
+          <h2 className="font-medium text-4xl lg:text-[64px] mb-16">Live Auction NFTs</h2>
+          <div>
+
+          </div>
+        </div>
       </div>
+
+
     </div>
+
+    
   );
 }
