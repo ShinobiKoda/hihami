@@ -2,33 +2,61 @@
 
 /* Hover fill button (inspired by provided Button 48) */
 .button-48 {
-	position: relative;
-	display: inline-block;
-	padding: 1rem 2.5rem; /* tuned for existing layout */
-	border: 1px solid #AD1AAF;
-	color: #ffffff;
-	background: transparent;
-	text-transform: uppercase;
-	cursor: pointer;
-	overflow: hidden;
+  position: relative;
+  display: inline-block;
+  padding: 1rem 2.5rem; /* tuned for existing layout */
+  border: 1px solid #ad1aaf;
+  color: #ffffff;
+  background: transparent;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .button-48::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background-color: #AD1AAF;
-	clip-path: polygon(-1% 0, 0 0, -25% 100%, -1% 100%);
-	transition: clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1);
-	will-change: clip-path;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #ad1aaf;
+  clip-path: polygon(-1% 0, 0 0, -25% 100%, -1% 100%);
+  transition: clip-path 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: clip-path;
 }
 
 .button-48:hover::before,
 .button-48:focus-visible::before {
-	clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
+  clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
 }
 
 .button-48 .text {
-	position: relative;
-	z-index: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove white/yellow autofill background in inputs for dark UI */
+/* Match the input container background: #261046 and text color */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #261046 inset;
+  box-shadow: 0 0 0px 1000px #261046 inset;
+  -webkit-text-fill-color: #a4a4a4;
+  caret-color: #ffffff;
+  transition: background-color 9999s ease-out 0s; /* prevents flash */
+}
+
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #261046 inset;
+  box-shadow: 0 0 0px 1000px #261046 inset;
+}
+
+/* Firefox */
+input:-moz-autofill,
+textarea:-moz-autofill,
+select:-moz-autofill {
+  box-shadow: 0 0 0px 1000px #261046 inset;
+  -moz-text-fill-color: #a4a4a4;
+  caret-color: #ffffff;
 }
