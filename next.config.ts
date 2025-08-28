@@ -13,6 +13,26 @@ const nextConfig: NextConfig = {
         hostname: "api.multiavatar.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "nft-cdn.alchemy.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ipfs.io",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "gateway.pinata.cloud",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cloudflare-ipfs.com",
+        pathname: "/**",
+      },
     ],
     // Allow remote SVGs (e.g., DiceBear avatars) while applying a restrictive CSP.
     dangerouslyAllowSVG: true,

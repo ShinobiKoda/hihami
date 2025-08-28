@@ -17,6 +17,7 @@ import { TfiWallet } from "react-icons/tfi";
 import { BsCollection } from "react-icons/bs";
 import { MdOutlineHexagon } from "react-icons/md";
 import { MdAddToPhotos } from "react-icons/md";
+import { NFTCard } from "../components/NFTCard";
 
 const nfts = [
   {
@@ -334,7 +335,6 @@ export default function HomePage() {
           <h2 className="w-full text-center font-medium text-4xl lg:text-[64px] mb-16">
             Our Collection
           </h2>
-          {/* Mobile (<= xl) horizontal carousel */}
           <div className="xl:hidden">
             <CarouselHorizontal
               items={nftCollection}
@@ -350,18 +350,32 @@ export default function HomePage() {
       </div>
 
       <div className="mt-10 lg:mt-20 p-4 lg:px-12 md:px-8 w-full max-w-[1440px] mx-auto">
-        <h3 className="font-light text-base lg:text-[25px]">Most Appreciated NFTs On Sale for the day</h3>
-        <div>
-          <h2 className="font-medium text-4xl lg:text-[64px] mb-16">Live Auction NFTs</h2>
-          <div>
-
-          </div>
+        <h3 className="font-light text-base lg:text-[25px]">
+          Most Loved NFTs of The Time
+        </h3>
+        <div className="flex items-center justify-between w-full">
+          <h2 className="font-medium text-4xl lg:text-[64px] mb-16">
+            Hot Trending NFTs
+          </h2>
+          <motion.button
+            className="items-center justify-center text-center hidden lg:flex"
+            variants={scaleOnHover}
+            initial="hidden"
+            animate="visible"
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+            <span className="button-48 px-8 lg:px-12 py-4 w-full">
+              <span className="text font-medium text-base lg:text-[22px]">
+                View All
+              </span>
+            </span>
+            <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+          </motion.button>
         </div>
+        <NFTCard />
       </div>
-
-
     </div>
-
-    
   );
 }

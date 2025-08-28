@@ -33,6 +33,40 @@
   z-index: 1;
 }
 
+.button-49 {
+  position: relative;
+  display: inline-block;
+  padding: 1rem 2.5rem; /* tuned for existing layout */
+  border: 1px solid #ad1aaf;
+  color: #ffffff;
+  background: transparent;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.button-49::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #ad1aaf;
+  clip-path: polygon(-1% 0, 0 0, -25% 100%, -1% 100%);
+  transition: clip-path 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: clip-path;
+}
+
+.button-49:hover::before,
+.button-49:focus-visible::before {
+  clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
+}
+
+.button-49 .text {
+  position: relative;
+  z-index: 1;
+}
+
+
+
 /* Remove white/yellow autofill background in inputs for dark UI */
 /* Match the input container background: #261046 and text color */
 input:-webkit-autofill,
