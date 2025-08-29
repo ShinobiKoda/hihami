@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-    // Allow remote SVGs (e.g., DiceBear avatars) while applying a restrictive CSP.
+ 
     dangerouslyAllowSVG: true,
     contentSecurityPolicy:
       "default-src 'self'; script-src 'none'; sandbox; style-src 'unsafe-inline';",

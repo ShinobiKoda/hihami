@@ -375,6 +375,24 @@ export default function HomePage() {
           </motion.button>
         </div>
         <NFTCard />
+        <div className="w-full flex items-center justify-center">
+          <motion.button
+            className="flex items-center justify-center text-center lg:hidden mt-10"
+            variants={scaleOnHover}
+            initial="hidden"
+            animate="visible"
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+            <span className="button-48 px-8 lg:px-12 py-4 w-full">
+              <span className="text font-medium text-base lg:text-[22px]">
+                View All
+              </span>
+            </span>
+            <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+          </motion.button>
+        </div>
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ export function Navbar() {
     setAvatarSeed(s);
   };
 
-  // Reset fallback state whenever the seed changes
+
   useEffect(() => {
     setAvatarError(false);
   }, [avatarSeed]);
