@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import { getNFTsForCollection } from "@/lib/getNFTCollection";
 import { NFT } from "@/types/type";
 import Image from "next/image";
+import { motion } from "motion/react";
+import {
+  fadeIn,
+  fadeInUp,
+  staggerChildren,
+  zoomIn,
+  scaleOnHover,
+} from "./animations/motion";
 
 type NFTV3 = {
   tokenId?: string;
@@ -148,69 +156,102 @@ export function NFTCard() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <motion.div
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      variants={staggerChildren}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.15 }}
+    >
       {nfts.map((nft, idx) => {
         const priceEth = (nft as NFTV3).contract?.openSeaMetadata?.floorPrice;
         const hasEth = typeof priceEth === "number" && isFinite(priceEth);
         const priceUsd =
           hasEth && ethUsd !== null ? priceEth! * ethUsd : undefined;
         return (
-          <div
+          <motion.div
             key={`${nft.contract?.address || "unknown"}-${
               getTokenId(nft) || idx
             }`}
-            className="min-h-[543px] max-w-[394px] p-2 rounded-lg shadow bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)]"
+            className="min-h-[543px] max-w-[394px] p-2 rounded-lg shadow bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] flex h-full justify-between flex-col"
+            variants={fadeInUp}
           >
-            {getImageUrl(nft) && (
-              <Image
-                src={getImageUrl(nft)!}
-                alt={getName(nft) || "NFT"}
-                width={300}
-                height={300}
-                className="w-full h-[261px] object-cover rounded-lg"
-              />
-            )}
-            <div className="mt-[31px] px-6 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <Image
-                  src="https://api.dicebear.com/7.x/adventurer/svg?seed=z"
-                  alt="Avatar Image"
-                  width={100}
-                  height={100}
-                  className="w-full"
-                />
-              </div>
-              <p className="font-semibold truncate flex flex-col">
-                <span className="font-normal lg:text-[25px] text-lg">
-                  {getDisplayName(nft)}
-                </span>
-                <span className="font-regular text-sm">By John Smith</span>
-              </p>
-            </div>
-            {hasEth && (
-              <div className="mt-4 px-6">
-                <div className="flex items-center gap-2">
+            <div>
+              {getImageUrl(nft) && (
+                <motion.div variants={zoomIn}>
                   <Image
-                    src="/images/(eth).svg"
-                    alt="Eth Image"
-                    width={40}
-                    height={40}
+                    src={getImageUrl(nft)!}
+                    alt={getName(nft) || "NFT"}
+                    width={300}
+                    height={300}
+                    className="w-full h-[261px] object-cover rounded-lg"
                   />
-                  <div className="">
-                    <p className="font-normal text-xl">{priceEth!.toFixed(2)} ETH</p>
-                    {priceUsd !== undefined && (
-                      <div className="text-sm text-gray-300 font-normal">{`$ ${priceUsd.toLocaleString(
-                        undefined,
-                        { maximumFractionDigits: 2 }
-                      )}`}</div>
-                    )}
-                  </div>
+                </motion.div>
+              )}
+              <motion.div
+                className="mt-[31px] px-6 flex items-center gap-4"
+                variants={fadeIn}
+              >
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                  <Image
+                    src="https://api.dicebear.com/7.x/adventurer/svg?seed=z"
+                    alt="Avatar Image"
+                    width={100}
+                    height={100}
+                    className="w-full"
+                  />
                 </div>
-              </div>
-            )}
-          </div>
+                <p className="font-semibold truncate flex flex-col">
+                  <span className="font-normal lg:text-[25px] text-lg">
+                    {getDisplayName(nft)}
+                  </span>
+                  <span className="font-regular text-sm">By John Smith</span>
+                </p>
+              </motion.div>
+              {hasEth && (
+                <motion.div
+                  className="mt-4 px-6 w-full flex justify-end"
+                  variants={fadeIn}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/images/(eth).svg"
+                      alt="Eth Image"
+                      width={40}
+                      height={40}
+                    />
+                    <div className="">
+                      <p className="font-normal text-xl">
+                        {priceEth!.toFixed(2)} ETH
+                      </p>
+                      {priceUsd !== undefined && (
+                        <div className="text-sm text-gray-300 font-normal">{`$ ${priceUsd.toLocaleString(
+                          undefined,
+                          { maximumFractionDigits: 2 }
+                        )}`}</div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+            <motion.button
+              className=" flex items-center justify-center text-center w-full"
+              variants={scaleOnHover}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+              <span className="button-48 px-8 lg:px-12 py-2 w-full">
+                <span className="text font-medium text-base lg:text-[22px]">
+                  View All
+                </span>
+              </span>
+              <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+            </motion.button>
+          </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
