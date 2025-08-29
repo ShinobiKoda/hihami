@@ -350,13 +350,16 @@ export default function HomePage() {
       </div>
 
       <div className="mt-10 lg:mt-20 p-4 lg:px-12 md:px-8 w-full max-w-[1440px] mx-auto">
-        <h3 className="font-light text-base lg:text-[25px]">
-          Most Loved NFTs of The Time
-        </h3>
-        <div className="flex items-center justify-between w-full">
-          <h2 className="font-medium text-4xl lg:text-[64px] mb-16">
-            Hot Trending NFTs
-          </h2>
+        <div className="w-full flex items-center justify-between ">
+          <div>
+            <h3 className="font-light text-base lg:text-[25px]">
+              Most Loved NFTs of The Time
+            </h3>
+            <h2 className="font-medium text-4xl lg:text-[64px] mb-16">
+              Hot Trending NFTs
+            </h2>
+          </div>
+
           <motion.button
             className="items-center justify-center text-center hidden lg:flex"
             variants={scaleOnHover}
