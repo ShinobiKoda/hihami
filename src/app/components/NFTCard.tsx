@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getNFTsForCollection } from "@/lib/getNFTCollection";
 import { NFT } from "@/types/type";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
 import {
   fadeIn,
@@ -169,6 +170,17 @@ export function NFTCard() {
         const hasEth = typeof priceEth === "number" && isFinite(priceEth);
         const priceUsd =
           hasEth && ethUsd !== null ? priceEth! * ethUsd : undefined;
+        const address =
+          (nft as NFTV3).contract?.address || (nft as NFT).contract.address;
+        const rawTokenId = (() => {
+          const v2 = nft as NFT;
+          if (v2?.id?.tokenId) return v2.id.tokenId;
+          return (nft as NFTV3).tokenId;
+        })();
+        const href =
+          address && rawTokenId
+            ? `/NFT/${address}-${encodeURIComponent(rawTokenId)}`
+            : undefined;
         return (
           <motion.div
             key={`${nft.contract?.address || "unknown"}-${
@@ -180,13 +192,25 @@ export function NFTCard() {
             <div>
               {getImageUrl(nft) && (
                 <motion.div variants={zoomIn}>
-                  <Image
-                    src={getImageUrl(nft)!}
-                    alt={getName(nft) || "NFT"}
-                    width={300}
-                    height={300}
-                    className="w-full h-[261px] object-cover rounded-lg"
-                  />
+                  {href ? (
+                    <Link href={href} aria-label={getName(nft) || "NFT"}>
+                      <Image
+                        src={getImageUrl(nft)!}
+                        alt={getName(nft) || "NFT"}
+                        width={300}
+                        height={300}
+                        className="w-full h-[261px] object-cover rounded-lg"
+                      />
+                    </Link>
+                  ) : (
+                    <Image
+                      src={getImageUrl(nft)!}
+                      alt={getName(nft) || "NFT"}
+                      width={300}
+                      height={300}
+                      className="w-full h-[261px] object-cover rounded-lg"
+                    />
+                  )}
                 </motion.div>
               )}
               <motion.div
@@ -202,18 +226,27 @@ export function NFTCard() {
                     className="w-full"
                   />
                 </div>
-                <p className="font-semibold truncate flex flex-col">
-                  <span className="font-normal lg:text-[25px] text-lg">
-                    {getDisplayName(nft)}
-                  </span>
-                  <span className="font-regular text-sm">By John Smith</span>
-                </p>
+                {href ? (
+                  <Link
+                    href={href}
+                    className="font-semibold truncate flex flex-col"
+                  >
+                    <span className="font-normal lg:text-[25px] text-lg">
+                      {getDisplayName(nft)}
+                    </span>
+                    <span className="font-regular text-sm">By John Smith</span>
+                  </Link>
+                ) : (
+                  <p className="font-semibold truncate flex flex-col">
+                    <span className="font-normal lg:text-[25px] text-lg">
+                      {getDisplayName(nft)}
+                    </span>
+                    <span className="font-regular text-sm">By John Smith</span>
+                  </p>
+                )}
               </motion.div>
               {hasEth && (
-                <motion.div
-                  className="mt-4 px-6 w-full"
-                  variants={fadeIn}
-                >
+                <motion.div className="mt-4 px-6 w-full" variants={fadeIn}>
                   <div className="flex items-center gap-2">
                     <Image
                       src="/images/(eth).svg"
@@ -236,18 +269,37 @@ export function NFTCard() {
                 </motion.div>
               )}
             </div>
-            <motion.button
-              className=" flex items-center justify-center text-center w-full"
-              variants={scaleOnHover}
-              whileHover="hover"
-              whileTap="tap"
-            >
-              <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-              <span className="button-48 px-8 lg:px-12 py-2 w-full">
-                <span className="text font-medium text-lg">Buy Now</span>
-              </span>
-              <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-            </motion.button>
+            {href ? (
+              <Link href={href} className="w-full">
+                <motion.div
+                  className="flex items-center justify-center text-center w-full"
+                  variants={scaleOnHover}
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+                  <span className="button-48 px-8 lg:px-12 py-2 w-full">
+                    <span className="text font-medium text-lg">
+                      View Details
+                    </span>
+                  </span>
+                  <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+                </motion.div>
+              </Link>
+            ) : (
+              <motion.button
+                className=" flex items-center justify-center text-center w-full"
+                variants={scaleOnHover}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+                <span className="button-48 px-8 lg:px-12 py-2 w-full">
+                  <span className="text font-medium text-lg">Buy Now</span>
+                </span>
+                <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
+              </motion.button>
+            )}
           </motion.div>
         );
       })}

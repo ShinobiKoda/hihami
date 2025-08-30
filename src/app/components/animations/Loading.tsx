@@ -31,7 +31,6 @@ const pulse: Variants = {
 };
 
 type LoadingProps = {
-  // Number of skeleton cards to render (defaults to 8 for a 4x2 feel on xl)
   count?: number;
 };
 
@@ -50,7 +49,6 @@ export default function Loading({ count = 8 }: LoadingProps) {
           className="min-h-[543px] max-w-[394px] p-2 rounded-lg bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] flex h-full justify-between flex-col"
         >
           <div>
-            {/* Image placeholder */}
             <motion.div
               variants={pulse}
               className="w-full h-[261px] rounded-lg overflow-hidden bg-white/10"
