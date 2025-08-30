@@ -12,6 +12,7 @@ import {
   zoomIn,
   scaleOnHover,
 } from "./animations/motion";
+import Loading from "./animations/Loading";
 
 type NFTV3 = {
   tokenId?: string;
@@ -153,7 +154,7 @@ export function NFTCard() {
     return parts.length > 1 ? `${parts[0]}…` : name;
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
 
   return (
     <motion.div
@@ -210,7 +211,7 @@ export function NFTCard() {
               </motion.div>
               {hasEth && (
                 <motion.div
-                  className="mt-4 px-6 w-full flex justify-end"
+                  className="mt-4 px-6 w-full"
                   variants={fadeIn}
                 >
                   <div className="flex items-center gap-2">
@@ -243,9 +244,7 @@ export function NFTCard() {
             >
               <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               <span className="button-48 px-8 lg:px-12 py-2 w-full">
-                <span className="text font-medium text-base lg:text-[22px]">
-                  View All
-                </span>
+                <span className="text font-medium text-lg">Buy Now</span>
               </span>
               <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
             </motion.button>
