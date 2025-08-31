@@ -41,14 +41,31 @@ const BASE_URL = `https://eth-mainnet.g.alchemy.com/nft/v3/${API_KEY}`;
 async function fetchSingleNFT(
   contract: string,
   tokenId: string
-): Promise<NFTV3 | null> {
-  if (!API_KEY) return null;
-  const url = `${BASE_URL}/getNFT?contractAddress=${contract}&tokenId=${tokenId}&withMetadata=true`;
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  const json = await res.json();
-  // Alchemy v3 returns object at json.nft
-  return json?.nft || json || null;
+): Promise<{ nft: NFTV3 | null; usedTokenId: string | null }> {
+  if (!API_KEY) return { nft: null, usedTokenId: null };
+  const candidates: string[] = [tokenId];
+  // Try alternate formats to avoid provider-specific expectations
+  if (/^0x[0-9a-fA-F]+$/.test(tokenId)) {
+    try {
+      candidates.push(BigInt(tokenId).toString(10));
+    } catch {}
+  } else if (/^\d+$/.test(tokenId)) {
+    try {
+      candidates.push("0x" + BigInt(tokenId).toString(16));
+    } catch {}
+  }
+
+  for (const tid of candidates) {
+    const url = `${BASE_URL}/getNFT?contractAddress=${contract}&tokenId=${encodeURIComponent(
+      tid
+    )}&withMetadata=true`;
+    const res = await fetch(url);
+    if (!res.ok) continue;
+    const json = await res.json();
+    const obj = json?.nft || json || null;
+    if (obj) return { nft: obj, usedTokenId: tid };
+  }
+  return { nft: null, usedTokenId: null };
 }
 
 function resolveImageUrl(url?: string) {
@@ -64,11 +81,11 @@ export default function NFTDetailPage() {
   const router = useRouter();
   const [nft, setNft] = useState<NFTV3 | null>(null);
   const [owners, setOwners] = useState<string[] | null>(null);
+  const [effectiveTokenId, setEffectiveTokenId] = useState<string | null>(null);
   const [ethUsd, setEthUsd] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   const { contract, tokenId } = useMemo(() => {
-    // id format: `${address}-${rawTokenId}` where tokenId may be hex like 0x1a
     const raw = params?.id || "";
     const sep = raw.indexOf("-");
     if (sep === -1) return { contract: "", tokenId: "" };
@@ -82,12 +99,17 @@ export default function NFTDetailPage() {
     const run = async () => {
       try {
         if (!contract || !tokenId) return;
-        const [n, o] = await Promise.all([
-          fetchSingleNFT(contract, tokenId),
-          getOwnersForToken(contract, tokenId).catch(() => ({ owners: [] })),
-        ]);
+        const { nft: n, usedTokenId } = await fetchSingleNFT(contract, tokenId);
         setNft(n);
-        setOwners(o?.owners || []);
+        setEffectiveTokenId(usedTokenId);
+        if (usedTokenId) {
+          const o = await getOwnersForToken(contract, usedTokenId).catch(
+            () => ({ owners: [] })
+          );
+          setOwners(o?.owners || []);
+        } else {
+          setOwners([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -215,7 +237,9 @@ export default function NFTDetailPage() {
               <div className="text-sm opacity-70">Contract</div>
               <div className="font-mono text-sm break-all">{contract}</div>
               <div className="text-sm opacity-70 mt-2">Token ID</div>
-              <div className="font-mono text-sm break-all">{tokenId}</div>
+              <div className="font-mono text-sm break-all">
+                {effectiveTokenId || tokenId}
+              </div>
             </motion.div>
 
             <motion.div variants={fadeIn} className="space-y-2">
