@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Navbar } from "@/app/components/layout/Navbar";
+import Breadcrumb from "@/app/components/layout/Breadcrumb";
 import {
   fadeIn,
   fadeInDown,
@@ -86,6 +87,7 @@ export default function NFTDetailPage() {
   const [effectiveTokenId, setEffectiveTokenId] = useState<string | null>(null);
   const [ethUsd, setEthUsd] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [buying, setBuying] = useState(false);
 
   const { contract, tokenId } = useMemo(() => {
     const raw = params?.id || "";
@@ -144,6 +146,11 @@ export default function NFTDetailPage() {
     nft?.contract?.openSeaMetadata?.collectionName ||
     `${nft?.contract?.symbol || "NFT"} #${tokenId}`;
 
+  const truncatedName =
+    displayName && displayName.length > 36
+      ? `${displayName.slice(0, 36)}…`
+      : displayName;
+
   const imageUrl =
     resolveImageUrl(nft?.image?.cachedUrl) ||
     resolveImageUrl(nft?.raw?.metadata?.image) ||
@@ -180,6 +187,16 @@ export default function NFTDetailPage() {
     <div className="w-full min-h-screen bg-[#140C1F] text-white">
       <Navbar />
       <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8 lg:mt-10">
+        <Breadcrumb
+          className="mb-4"
+          items={[
+            { label: "Home", href: "/Home" },
+            {
+              label: truncatedName || "NFT",
+              tooltip: displayName || undefined,
+            },
+          ]}
+        />
         <motion.div
           className="grid lg:grid-cols-2 gap-8 items-start"
           variants={{
@@ -268,12 +285,21 @@ export default function NFTDetailPage() {
               </div>
             </motion.div>
 
-            <motion.div
-              variants={fadeInUp}
-              className="pt-4 w-full"
-            >
+            <motion.div variants={fadeInUp} className="pt-4 w-full">
               <motion.button
-                className="flex items-center justify-center text-center w-full max-w-md"
+                onClick={async () => {
+                  if (buying) return;
+                  setBuying(true);
+                  try {
+                    await new Promise((r) => setTimeout(r, 1500));
+                  } finally {
+                    setBuying(false);
+                  }
+                }}
+                disabled={buying}
+                className={`flex items-center justify-center text-center w-full max-w-md disabled:cursor-not-allowed ${
+                  buying ? "opacity-80 cursor-not-allowed" : ""
+                }`}
                 variants={scaleOnHover}
                 initial="hidden"
                 animate="visible"
@@ -282,13 +308,19 @@ export default function NFTDetailPage() {
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
                 <span className="button-48 px-8 lg:px-12 py-3 w-full">
-                  <span className="text font-medium text-base lg:text-[20px]">
-                    Buy
+                  <span className="text font-medium text-base lg:text-[20px] flex items-center justify-center gap-2">
+                    {buying ? (
+                      <>
+                        Buying
+                        <ClipLoader size={16} color="#ffffff" />
+                      </>
+                    ) : (
+                      <>Buy Now</>
+                    )}
                   </span>
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               </motion.button>
-
             </motion.div>
           </div>
         </motion.div>
