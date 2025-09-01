@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
+import { Navbar } from "@/app/components/layout/Navbar";
 import {
   fadeIn,
   fadeInDown,
@@ -12,6 +13,7 @@ import {
   zoomIn,
 } from "@/app/components/animations/motion";
 import { getOwnersForToken } from "@/lib/getOwnersForToken";
+import { HashLoader, ClipLoader } from "react-spinners";
 
 type NFTV3 = {
   tokenId?: string;
@@ -56,13 +58,13 @@ async function fetchSingleNFT(
   }
 
   for (const tid of candidates) {
-    const url = `${BASE_URL}/getNFT?contractAddress=${contract}&tokenId=${encodeURIComponent(
+    const url = `${BASE_URL}/getNFTMetadata?contractAddress=${contract}&tokenId=${encodeURIComponent(
       tid
-    )}&withMetadata=true`;
+    )}`;
     const res = await fetch(url);
     if (!res.ok) continue;
     const json = await res.json();
-    const obj = json?.nft || json || null;
+    const obj = json || null;
     if (obj) return { nft: obj, usedTokenId: tid };
   }
   return { nft: null, usedTokenId: null };
@@ -150,29 +152,34 @@ export default function NFTDetailPage() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
-        <p className="opacity-70">Loading NFT…</p>
+      <div className="w-full min-h-screen bg-[#140C1F] text-white flex items-center">
+        <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8 flex justify-center">
+          <HashLoader color="#AD1AAF" aria-label="Loading NFT" />
+        </div>
       </div>
     );
   }
 
   if (!nft) {
     return (
-      <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
-        <p className="opacity-70">NFT not found.</p>
-        <button
-          onClick={() => router.back()}
-          className="mt-4 text-sm underline opacity-80"
-        >
-          Go back
-        </button>
+      <div className="w-full min-h-screen bg-[#140C1F] text-white">
+        <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
+          <p className="opacity-80">NFT not found.</p>
+          <button
+            onClick={() => router.back()}
+            className="mt-4 text-sm underline opacity-80"
+          >
+            Go back
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full min-h-full bg-[#140C1F] text-white">
-      <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
+    <div className="w-full min-h-screen bg-[#140C1F] text-white">
+      <Navbar />
+      <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8 lg:mt-10">
         <motion.div
           className="grid lg:grid-cols-2 gap-8 items-start"
           variants={{
@@ -189,7 +196,7 @@ export default function NFTDetailPage() {
                 alt={displayName}
                 width={800}
                 height={800}
-                className="w-full max-h-[600px] object-contain rounded-xl bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] p-4"
+                className="w-full max-h-[600px] object-contain rounded-xl  p-4"
               />
             )}
           </motion.div>
@@ -263,10 +270,10 @@ export default function NFTDetailPage() {
 
             <motion.div
               variants={fadeInUp}
-              className="pt-4 flex gap-4 flex-wrap"
+              className="pt-4 w-full"
             >
               <motion.button
-                className="flex items-center justify-center text-center"
+                className="flex items-center justify-center text-center w-full max-w-md"
                 variants={scaleOnHover}
                 initial="hidden"
                 animate="visible"
@@ -282,22 +289,6 @@ export default function NFTDetailPage() {
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               </motion.button>
 
-              <motion.button
-                className="flex items-center justify-center text-center"
-                variants={scaleOnHover}
-                initial="hidden"
-                animate="visible"
-                whileHover="hover"
-                whileTap="tap"
-              >
-                <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-                <span className="button-48 px-8 lg:px-12 py-3 w-full">
-                  <span className="text font-medium text-base lg:text-[20px]">
-                    Make Offer
-                  </span>
-                </span>
-                <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
-              </motion.button>
             </motion.div>
           </div>
         </motion.div>
