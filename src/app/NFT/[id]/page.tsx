@@ -118,7 +118,7 @@ export default function NFTDetailPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#140C1F] text-white">
-      <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8 lg:mt-10">
+      <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
         <Breadcrumb
           className="mb-4"
           items={[

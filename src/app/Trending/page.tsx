@@ -1,4 +1,6 @@
 "use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 import {
   fadeInDown,
@@ -114,6 +116,38 @@ function altAdjective(seed: string): string {
 }
 
 export default function TrendingPage() {
+  const [permalinksByImage, setPermalinksByImage] = useState<
+    Record<string, string>
+  >({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/data/NFT.json", { cache: "force-cache" });
+        const data = (await res.json()) as Array<{
+          image: string;
+          links?: { permalink?: string };
+          contract: { address: string };
+          token: { id: string };
+        }>;
+        if (cancelled) return;
+        const map: Record<string, string> = {};
+        for (const n of data) {
+          const fallback = `/NFT/${n.contract.address}-${encodeURIComponent(
+            n.token.id
+          )}`;
+          map[n.image] = n.links?.permalink || fallback;
+        }
+        setPermalinksByImage(map);
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   return (
     <div className="w-full min-h-screen bg-[#140C1F] text-white">
       <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
@@ -143,6 +177,7 @@ export default function TrendingPage() {
           {(() => {
             let usedCrypto = false;
             return trendingNfts.map((item, i) => {
+              const href = permalinksByImage[item.image];
               const baseName = creatorNameFromSeed(item.name);
               let finalName = baseName;
               if (baseName.startsWith("Crypto ")) {
@@ -154,7 +189,7 @@ export default function TrendingPage() {
                   usedCrypto = true;
                 }
               }
-              return (
+              const Card = (
                 <motion.div
                   key={i}
                   variants={fadeInUp}
@@ -180,6 +215,19 @@ export default function TrendingPage() {
                     </p>
                   </div>
                 </motion.div>
+              );
+              return href ? (
+                <Link
+                  key={`l-${i}`}
+                  href={href}
+                  prefetch={false}
+                  className="block"
+                  aria-label={`View ${item.name}`}
+                >
+                  {Card}
+                </Link>
+              ) : (
+                Card
               );
             });
           })()}

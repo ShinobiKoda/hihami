@@ -18,6 +18,7 @@ import { FaRegUser } from "react-icons/fa";
 import { useAccount, useConnect } from "wagmi";
 
 export function Navbar() {
+  const AVATAR_SEED_KEY = "hihami.avatarSeed.v1";
   const [open, setOpen] = useState(false);
   const openMenu = useCallback(() => setOpen(true), []);
   const closeMenu = useCallback(() => setOpen(false), []);
@@ -76,10 +77,30 @@ export function Navbar() {
   const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
     avatarSeed
   )}`;
+  const setGlobalAvatarSeed = useCallback((s: string) => {
+    setAvatarSeed(s);
+    try {
+      localStorage.setItem(AVATAR_SEED_KEY, s);
+      const evt: CustomEvent<string> = new CustomEvent("hihami:avatarSeed", {
+        detail: s,
+      });
+      window.dispatchEvent(evt);
+    } catch {}
+  }, []);
+
   const randomizeSeed = () => {
     const s = Math.random().toString(36).slice(2, 10);
-    setAvatarSeed(s);
+    setGlobalAvatarSeed(s);
   };
+
+  useEffect(() => {
+    // Load persisted avatar seed on mount
+    try {
+      const saved = localStorage.getItem(AVATAR_SEED_KEY);
+      if (saved) setGlobalAvatarSeed(saved);
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setAvatarError(false);
