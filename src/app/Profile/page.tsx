@@ -1,11 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Navbar } from "../components/layout/Navbar";
 import { useUser } from "@/app/context/UserContext";
 import { IoIosEyeOff } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
-import Image from "next/image"
-
+import Image from "next/image";
 
 export default function Profile() {
   const { user } = useUser();
@@ -24,7 +22,6 @@ export default function Profile() {
 
   return (
     <div className="w-full min-h-screen bg-[#140C1F] text-white pb-10">
-      <Navbar />
       <div
         className="w-full bg-cover bg-center h-[359px] relative flex items-center justify-center"
         style={{
@@ -33,7 +30,13 @@ export default function Profile() {
       >
         <div className="absolute -bottom-22 space-y-4">
           <div className="bg-white w-[120px] h-[120px] rounded-full">
-            <Image src="https://api.dicebear.com/7.x/adventurer/svg?seed=p" className="flex items-center justify-center" alt="Profile pic" height={310} width={130}/>
+            <Image
+              src="https://api.dicebear.com/7.x/adventurer/svg?seed=p"
+              className="flex items-center justify-center"
+              alt="Profile pic"
+              height={310}
+              width={130}
+            />
           </div>
           <p>Update your profile</p>
         </div>

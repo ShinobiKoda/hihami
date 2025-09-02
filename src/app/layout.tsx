@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { Oxanium } from "next/font/google";
 // Wagmi is provided in the client wrapper
+import { Navbar } from "./components/layout/Navbar";
 
 const oxanium = Oxanium({
   variable: "--font-oxanium",
@@ -27,7 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${oxanium.variable} antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

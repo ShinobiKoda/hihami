@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Navbar } from "@/app/components/layout/Navbar";
 import Breadcrumb from "@/app/components/layout/Breadcrumb";
 import {
   fadeIn,
@@ -119,7 +118,6 @@ export default function NFTDetailPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#140C1F] text-white">
-      <Navbar />
       <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8 lg:mt-10">
         <Breadcrumb
           className="mb-4"
