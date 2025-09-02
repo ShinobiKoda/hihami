@@ -114,7 +114,6 @@ export function Navbar() {
     setAvatarError(false);
   }, [avatarSeed]);
 
-  // Determine wallet label based on connector/provider flags
   useEffect(() => {
     if (!isConnected) {
       setWalletLabel("Wallet");

@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-// Providers moved to a client component to avoid passing functions to server
 import Providers from "./providers";
 import { Oxanium } from "next/font/google";
-// Wagmi is provided in the client wrapper
 import AppShell from "./AppShell";
 
 const oxanium = Oxanium({
@@ -27,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${oxanium.variable} antialiased`}>
+      <body className={`${oxanium.variable} antialiased w-full h-full bg-[#140C1F]`}>
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>

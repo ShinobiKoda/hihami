@@ -3,6 +3,7 @@ import Carousel3D from "../components/Carousel3D";
 import CarouselHorizontal from "../components/CarouselHorizontal";
 import Coverflow from "../components/Coverflow";
 import Image from "next/image";
+import { Footer } from "@/app/components/layout/Footer";
 import { motion } from "motion/react";
 import {
   fadeInDown,
@@ -102,7 +103,7 @@ const supportedWallets = [
 
 export default function HomePage() {
   return (
-    <div className="w-full min-h-full bg-[#140C1F] text-white">
+    <div className="w-full min-h-full text-white">
       <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
         <div className="grid xl:grid-cols-2 gap-8 lg:gap-12 items-start">
           <motion.div
@@ -394,6 +395,9 @@ export default function HomePage() {
           </motion.button>
         </div>
       </div>
+
+      <Footer />
+
     </div>
   );
 }
