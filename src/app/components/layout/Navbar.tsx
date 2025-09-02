@@ -256,11 +256,11 @@ export function Navbar() {
                 <div className="mt-3 h-px bg-white/10" />
                 <ul className="mt-3 space-y-2 text-sm *:rounded-md *:px-3 *:py-2">
                   <li className="hover:bg-white/10 cursor-pointer">
-                    <Link href="/Profile" className="w-full">Profile</Link>
+                    <Link href="/Profile" className="w-full">
+                      Profile
+                    </Link>
                   </li>
-                  <li className="hover:bg-white/10 cursor-pointer">
-                    <Link href="/Profile" className="w-full">Settings</Link>
-                  </li>
+
                   <li
                     className="hover:bg-white/10 cursor-pointer text-red-300"
                     onClick={onSignOut}

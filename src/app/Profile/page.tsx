@@ -10,9 +10,39 @@ function truncateMiddle(value: string, front: number = 6, back: number = 6) {
   return `${value.slice(0, front)}…${value.slice(-back)}`;
 }
 
+type Eip1193Provider = {
+  isTrust?: boolean;
+  isMetaMask?: boolean;
+  isCoinbaseWallet?: boolean;
+  isBraveWallet?: boolean;
+};
+
+function detectWalletBrand(connector?: { name?: string } | null) {
+  if (typeof window === "undefined") return connector?.name || "Wallet";
+  const eth = (
+    window as unknown as {
+      ethereum?: Eip1193Provider & {
+        providers?: (Eip1193Provider | undefined)[];
+      };
+    }
+  ).ethereum;
+  const providers = (eth?.providers || []).filter((p): p is Eip1193Provider =>
+    Boolean(p)
+  );
+  const pool = providers.length ? providers : eth ? [eth] : [];
+
+  const has = (prop: keyof Eip1193Provider) => pool.some((p) => p && p[prop]);
+  if (has("isTrust")) return "TrustWallet";
+  if (has("isMetaMask")) return "MetaMask";
+  if (has("isCoinbaseWallet")) return "CoinbaseWallet";
+  if (has("isBraveWallet")) return "BraveWallet";
+  return connector?.name || "Wallet";
+}
+
 export default function Profile() {
   const { user } = useUser();
-  const { address, isConnected } = useAccount();
+  const { address, addresses, isConnected, connector } = useAccount();
+  const walletBrand = detectWalletBrand(connector);
 
   const [fullName, setFullName] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
@@ -107,21 +137,46 @@ export default function Profile() {
               placeholder="........"
             />
           </div>
-          {/* Wallet address (read-only) */}
+          {/* Wallet address (read-only dropdown) */}
           <div className="flex flex-col gap-4 lg:col-span-2">
             <label className="font-light opacity-80 text-base lg:text-lg">
               Connected Wallet
             </label>
-            <input
-              type="text"
-              className="rounded-[15px] border border-gray-500 px-4 py-6 outline-none font-mono"
-              readOnly
+            <select
+              className="rounded-[15px] border border-gray-500 px-4 py-6 outline-none font-mono bg-transparent"
+              disabled
               value={
-                isConnected && address
-                  ? truncateMiddle(address)
-                  : "Not connected"
+                isConnected
+                  ? addresses && addresses.length
+                    ? addresses[0]
+                    : address || ""
+                  : ""
               }
-            />
+              onChange={() => {}}
+            >
+              {isConnected &&
+                (addresses && addresses.length
+                  ? addresses
+                  : address
+                  ? [address]
+                  : []
+                ).map((addr) => (
+                  <option
+                    key={addr as string}
+                    value={addr as string}
+                    className="bg-[#140C1F]"
+                  >
+                    {`${walletBrand.toLowerCase()}: ${truncateMiddle(
+                      String(addr)
+                    )}`}
+                  </option>
+                ))}
+              {!isConnected && (
+                <option value="" className="bg-[#140C1F]">
+                  Not connected
+                </option>
+              )}
+            </select>
           </div>
         </div>
 
