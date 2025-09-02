@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Navbar } from "./components/layout/Navbar";
+import { Footer } from "./components/layout/Footer";
 
 const AUTH_PREFIXES = [
   "/login",
@@ -24,6 +25,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
     <>
       {!hideNavbar && <Navbar />}
       {children}
+      {!hideNavbar && <Footer />}
     </>
   );
 }

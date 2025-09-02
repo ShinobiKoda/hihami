@@ -3,7 +3,6 @@ import Carousel3D from "../components/Carousel3D";
 import CarouselHorizontal from "../components/CarouselHorizontal";
 import Coverflow from "../components/Coverflow";
 import Image from "next/image";
-import { Footer } from "@/app/components/layout/Footer";
 import { motion } from "motion/react";
 import {
   fadeInDown,
@@ -396,8 +395,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <Footer />
-
+      
     </div>
   );
 }
