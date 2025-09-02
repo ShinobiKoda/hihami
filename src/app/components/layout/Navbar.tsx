@@ -13,9 +13,10 @@ import {
 } from "../animations/motion";
 import { MobileSidebar } from "./MobileSidebar";
 import { useUser } from "@/app/context/UserContext";
-import { FiRefreshCw } from "react-icons/fi";
+import { FiRefreshCw, FiCheck } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount } from "wagmi";
+import { ConnectModal } from "../wallet/ConnectModal";
 
 export function Navbar() {
   const AVATAR_SEED_KEY = "hihami.avatarSeed.v1";
@@ -29,12 +30,19 @@ export function Navbar() {
   const profileRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const { user: me, refreshUser, clearUser } = useUser();
-  const { isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
+  const { isConnected, connector } = useAccount();
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
+  const [walletLabel, setWalletLabel] = useState<string>("Wallet");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     if (profileOpen) void refreshUser();
   }, [profileOpen, refreshUser]);
+
+  // Prevent hydration mismatch by delaying wallet UI until mounted
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -106,16 +114,55 @@ export function Navbar() {
     setAvatarError(false);
   }, [avatarSeed]);
 
-  const onConnectWallet = () => {
-    try {
-      const injected =
-        connectors.find((c) => c.id === "injected") ?? connectors[0];
-      if (!injected) return;
-      if (isConnected) return; // already connected; could open profile or noop
-      connect({ connector: injected });
-    } catch (e) {
-      console.error("Wallet connect failed", e);
+  // Determine wallet label based on connector/provider flags
+  useEffect(() => {
+    if (!isConnected) {
+      setWalletLabel("Wallet");
+      return;
     }
+    let label = "Wallet";
+    try {
+      const eth = (
+        typeof window !== "undefined"
+          ? (window as unknown as { ethereum?: Record<string, unknown> })
+              .ethereum
+          : null
+      ) as
+        | (Record<string, unknown> & {
+            isMetaMask?: boolean;
+            isTrust?: boolean;
+            isTrustWallet?: boolean;
+            provider?: { isTrustWallet?: boolean };
+          })
+        | null;
+      const isTrust =
+        eth?.isTrust === true ||
+        eth?.isTrustWallet === true ||
+        eth?.provider?.isTrustWallet === true ||
+        (connector?.name?.toLowerCase?.().includes("trust") ?? false);
+      const isMetaMask = eth?.isMetaMask === true;
+      if (connector?.id === "injected") {
+        if (isTrust) {
+          label = "Trust Wallet";
+        } else if (isMetaMask) {
+          label = "MetaMask";
+        } else {
+          label = connector?.name || "Injected Wallet";
+        }
+      } else if (connector?.id === "coinbaseWallet") {
+        label = "Coinbase Wallet";
+      } else if (connector?.id === "walletConnect") {
+        label = "WalletConnect";
+      } else if (connector?.name) {
+        label = connector.name;
+      }
+    } catch {}
+    setWalletLabel(label);
+  }, [isConnected, connector]);
+
+  const onConnectWallet = () => {
+    // Always open the modal to let the user choose a wallet or see status.
+    setWalletModalOpen(true);
   };
 
   return (
@@ -160,22 +207,45 @@ export function Navbar() {
         </motion.ul>
 
         <div className="flex items-center gap-[30px]">
-          <motion.div
-            variants={slideInFromRight}
-            className="items-center justify-between hidden lg:flex cursor-pointer hover:opacity-90"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onConnectWallet}
-            aria-label={isConnected ? "Wallet Connected" : "Connect Wallet"}
-          >
-            <Image
-              src="/images/connect-wallet-btn.svg"
-              alt="Connect Wallet Btn"
-              width={100}
-              height={100}
-              className="w-[180px] md:w-[200px]"
+          {!mounted ? (
+            // SSR-safe placeholder to avoid swapping "connect" vs "connected" during hydration
+            <div
+              className="hidden lg:block w-[200px] h-10 rounded-full bg-white/10 border border-white/15"
+              aria-hidden="true"
             />
-          </motion.div>
+          ) : isConnected ? (
+            <motion.button
+              type="button"
+              variants={slideInFromRight}
+              className="flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3 py-2 hover:bg-white/15"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onConnectWallet}
+              aria-label="Wallet Connected"
+            >
+              <span className="text-sm font-medium flex items-center gap-1">
+                {walletLabel}:
+                <FiCheck className="text-green-400" aria-hidden="true" />
+              </span>
+            </motion.button>
+          ) : (
+            <motion.div
+              variants={slideInFromRight}
+              className="items-center justify-between hidden lg:flex cursor-pointer hover:opacity-90"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onConnectWallet}
+              aria-label="Connect Wallet"
+            >
+              <Image
+                src="/images/connect-wallet-btn.svg"
+                alt="Connect Wallet Btn"
+                width={100}
+                height={100}
+                className="w-[180px] md:w-[200px]"
+              />
+            </motion.div>
+          )}
           <button
             aria-label="Open menu"
             onClick={openMenu}
@@ -302,6 +372,11 @@ export function Navbar() {
           onRandomizeSeed={randomizeSeed}
         />
       </motion.nav>
+      {/* Render modal outside nav so fixed overlay isn't constrained by nav's transform */}
+      <ConnectModal
+        open={walletModalOpen}
+        onClose={() => setWalletModalOpen(false)}
+      />
     </div>
   );
 }

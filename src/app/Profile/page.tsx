@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { useUser } from "@/app/context/UserContext";
 import { IoIosEyeOff } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
+import { FiCopy, FiCheck } from "react-icons/fi";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
+import { useAccount } from "wagmi";
 import {
   fadeIn,
   fadeInUp,
@@ -16,6 +18,7 @@ import {
 
 export default function Profile() {
   const { user } = useUser();
+  const { isConnected, address, connector } = useAccount();
 
   const [fullName, setFullName] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
@@ -26,12 +29,60 @@ export default function Profile() {
   const [pwdSaving, setPwdSaving] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [avatarSeed, setAvatarSeed] = useState<string>("p");
+  const [walletLabel, setWalletLabel] = useState<string>("Wallet");
+  const [copied, setCopied] = useState(false);
+  const [copyToastId, setCopyToastId] = useState<string | number | null>(null);
+
+  const truncateAddress = (addr: string) =>
+    addr ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : "";
 
   useEffect(() => {
     setUserName(user?.username ?? "");
     setEmail(user?.email ?? "");
     setFullName((prev: string) => prev || user?.username || "");
   }, [user]);
+
+  // Derive wallet label similar to Navbar
+  useEffect(() => {
+    if (!isConnected) {
+      setWalletLabel("Wallet");
+      return;
+    }
+    let label = "Wallet";
+    try {
+      const eth = (
+        typeof window !== "undefined"
+          ? (window as unknown as { ethereum?: Record<string, unknown> })
+              .ethereum
+          : null
+      ) as
+        | (Record<string, unknown> & {
+            isMetaMask?: boolean;
+            isTrust?: boolean;
+            isTrustWallet?: boolean;
+            provider?: { isTrustWallet?: boolean };
+          })
+        | null;
+      const isTrust =
+        eth?.isTrust === true ||
+        eth?.isTrustWallet === true ||
+        eth?.provider?.isTrustWallet === true ||
+        (connector?.name?.toLowerCase?.().includes("trust") ?? false);
+      const isMetaMask = eth?.isMetaMask === true;
+      if (connector?.id === "injected") {
+        if (isTrust) label = "Trust Wallet";
+        else if (isMetaMask) label = "MetaMask";
+        else label = connector?.name || "Injected Wallet";
+      } else if (connector?.id === "coinbaseWallet") {
+        label = "Coinbase Wallet";
+      } else if (connector?.id === "walletConnect") {
+        label = "WalletConnect";
+      } else if (connector?.name) {
+        label = connector.name;
+      }
+    } catch {}
+    setWalletLabel(label);
+  }, [isConnected, connector]);
 
   // Sync avatar with Navbar via localStorage and a custom event
   useEffect(() => {
@@ -48,6 +99,25 @@ export default function Profile() {
     return () =>
       window.removeEventListener("hihami:avatarSeed", onSeed as EventListener);
   }, []);
+
+  const onCopyAddress = async () => {
+    if (!address || copied) return;
+    // If a previous copy toast is still active, do nothing
+    if (copyToastId && toast.isActive(copyToastId)) return;
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+      const id = toast.success("Address copied", {
+        onClose: () => {
+          setCopied(false);
+          setCopyToastId(null);
+        },
+      });
+      setCopyToastId(id);
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
 
   const onSaveProfile = async () => {
     try {
@@ -125,7 +195,7 @@ export default function Profile() {
               width={130}
             />
           </motion.div>
-          <motion.p variants={fadeInUp}>Update your profile</motion.p>
+          {/* <motion.p variants={fadeInUp}>Update your profile</motion.p> */}
         </motion.div>
       </motion.div>
 
@@ -142,6 +212,30 @@ export default function Profile() {
         >
           User Profile Information
         </motion.h2>
+        {isConnected && address ? (
+          <motion.div
+            className="mt-2 text-sm text-white/85"
+            variants={fadeInUp}
+          >
+            <span className="font-semibold">{walletLabel}:</span>{" "}
+            <span className="inline-flex items-center gap-2">
+              <span>{truncateAddress(address)}</span>
+              <button
+                type="button"
+                onClick={onCopyAddress}
+                aria-label="Copy wallet address"
+                disabled={copied}
+                className="p-1 rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {copied ? (
+                  <FiCheck className="text-green-400" size={16} />
+                ) : (
+                  <FiCopy size={16} />
+                )}
+              </button>
+            </span>
+          </motion.div>
+        ) : null}
         <motion.hr className="mt-[40px] text-[#A7A7A7]" variants={fadeIn} />
 
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 mt-10 gap-10">
