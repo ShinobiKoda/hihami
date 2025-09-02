@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ToastProvider } from "./components/animations/toast";
-import { UserProvider } from "./context/UserContext";
+// Providers moved to a client component to avoid passing functions to server
+import Providers from "./providers";
 import { Oxanium } from "next/font/google";
+// Wagmi is provided in the client wrapper
 
 const oxanium = Oxanium({
   variable: "--font-oxanium",
@@ -26,10 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${oxanium.variable} antialiased`}>
-        <UserProvider>
-          {children}
-          <ToastProvider />
-        </UserProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -13,79 +13,34 @@ import {
   scaleOnHover,
   zoomIn,
 } from "@/app/components/animations/motion";
-import { getOwnersForToken } from "@/lib/getOwnersForToken";
 import { HashLoader, ClipLoader } from "react-spinners";
 
-type NFTV3 = {
-  tokenId?: string;
-  name?: string;
-  description?: string;
-  image?: { cachedUrl?: string; originalUrl?: string };
-  tokenUri?: string;
-  raw?: {
-    tokenUri?: string;
-    metadata?: { name?: string; description?: string; image?: string };
-  };
-  contract?: {
-    address?: string;
-    name?: string;
-    symbol?: string;
-    openSeaMetadata?: {
-      collectionName?: string;
-      floorPrice?: number;
-      description?: string;
-    };
-  };
+type LocalNFT = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: { eth: number };
+  contract: { address: string; name?: string; symbol?: string };
+  token: { id: string };
+  owner?: { address?: string; username?: string };
+  creator?: { address?: string; username?: string };
 };
 
-const API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
-const BASE_URL = `https://eth-mainnet.g.alchemy.com/nft/v3/${API_KEY}`;
-
-async function fetchSingleNFT(
-  contract: string,
-  tokenId: string
-): Promise<{ nft: NFTV3 | null; usedTokenId: string | null }> {
-  if (!API_KEY) return { nft: null, usedTokenId: null };
-  const candidates: string[] = [tokenId];
-  // Try alternate formats to avoid provider-specific expectations
-  if (/^0x[0-9a-fA-F]+$/.test(tokenId)) {
-    try {
-      candidates.push(BigInt(tokenId).toString(10));
-    } catch {}
-  } else if (/^\d+$/.test(tokenId)) {
-    try {
-      candidates.push("0x" + BigInt(tokenId).toString(16));
-    } catch {}
-  }
-
-  for (const tid of candidates) {
-    const url = `${BASE_URL}/getNFTMetadata?contractAddress=${contract}&tokenId=${encodeURIComponent(
-      tid
-    )}`;
-    const res = await fetch(url);
-    if (!res.ok) continue;
-    const json = await res.json();
-    const obj = json || null;
-    if (obj) return { nft: obj, usedTokenId: tid };
-  }
-  return { nft: null, usedTokenId: null };
+function truncateMiddle(value: string, front: number = 6, back: number = 6) {
+  if (!value) return "";
+  if (value.length <= front + back + 1) return value;
+  return `${value.slice(0, front)}…${value.slice(-back)}`;
 }
 
-function resolveImageUrl(url?: string) {
-  if (!url) return undefined;
-  if (url.startsWith("ipfs://")) {
-    return `https://ipfs.io/ipfs/${url.replace("ipfs://", "")}`;
-  }
-  return url;
-}
+const DEFAULT_ETH_USD = 3000; // fallback if no env provided
+const ETH_USD_RATE = Number(process.env.NEXT_PUBLIC_ETH_USD) || DEFAULT_ETH_USD;
 
 export default function NFTDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const [nft, setNft] = useState<NFTV3 | null>(null);
+  const [nft, setNft] = useState<LocalNFT | null>(null);
   const [owners, setOwners] = useState<string[] | null>(null);
-  const [effectiveTokenId, setEffectiveTokenId] = useState<string | null>(null);
-  const [ethUsd, setEthUsd] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState(false);
 
@@ -103,17 +58,15 @@ export default function NFTDetailPage() {
     const run = async () => {
       try {
         if (!contract || !tokenId) return;
-        const { nft: n, usedTokenId } = await fetchSingleNFT(contract, tokenId);
-        setNft(n);
-        setEffectiveTokenId(usedTokenId);
-        if (usedTokenId) {
-          const o = await getOwnersForToken(contract, usedTokenId).catch(
-            () => ({ owners: [] })
-          );
-          setOwners(o?.owners || []);
-        } else {
-          setOwners([]);
-        }
+        const res = await fetch("/data/NFT.json", { cache: "no-store" });
+        const json = (await res.json()) as LocalNFT[];
+        const found = json.find(
+          (x) =>
+            x.contract.address.toLowerCase() === contract.toLowerCase() &&
+            x.token.id === tokenId
+        );
+        setNft(found || null);
+        setOwners(found?.owner?.address ? [found.owner.address] : []);
       } finally {
         setLoading(false);
       }
@@ -121,41 +74,22 @@ export default function NFTDetailPage() {
     run();
   }, [contract, tokenId]);
 
-  useEffect(() => {
-    const fetchRate = async () => {
-      try {
-        const res = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
-        );
-        if (!res.ok) return;
-        const json = await res.json();
-        const rate = json?.ethereum?.usd;
-        if (typeof rate === "number" && isFinite(rate)) setEthUsd(rate);
-      } catch {}
-    };
-    fetchRate();
-  }, []);
-
-  const priceEth = nft?.contract?.openSeaMetadata?.floorPrice;
+  const priceEth = nft?.price?.eth;
   const priceUsd =
-    typeof priceEth === "number" && ethUsd ? priceEth * ethUsd : null;
+    typeof priceEth === "number" && isFinite(priceEth)
+      ? priceEth * ETH_USD_RATE
+      : undefined;
 
-  const displayName =
-    nft?.name ||
-    nft?.raw?.metadata?.name ||
-    nft?.contract?.openSeaMetadata?.collectionName ||
-    `${nft?.contract?.symbol || "NFT"} #${tokenId}`;
+  const displayName = nft
+    ? `${nft.name}`
+    : `${contract.slice(0, 6)}…${contract.slice(-4)} #${tokenId}`;
 
   const truncatedName =
     displayName && displayName.length > 36
       ? `${displayName.slice(0, 36)}…`
       : displayName;
 
-  const imageUrl =
-    resolveImageUrl(nft?.image?.cachedUrl) ||
-    resolveImageUrl(nft?.raw?.metadata?.image) ||
-    resolveImageUrl(nft?.tokenUri) ||
-    undefined;
+  const imageUrl = nft?.image || undefined;
 
   if (loading) {
     return (
@@ -225,14 +159,11 @@ export default function NFTDetailPage() {
               {displayName}
             </motion.h1>
             <motion.p variants={fadeIn} className="opacity-80 leading-relaxed">
-              {nft.description ||
-                nft.raw?.metadata?.description ||
-                nft.contract?.openSeaMetadata?.description ||
-                "No description available."}
+              {nft?.description || "No description available."}
             </motion.p>
 
             <motion.div variants={fadeInUp} className="flex items-center gap-4">
-              {typeof priceEth === "number" && (
+              {typeof priceEth === "number" && isFinite(priceEth) && (
                 <div className="flex items-center gap-2">
                   <Image
                     src="/images/(eth).svg"
@@ -244,7 +175,7 @@ export default function NFTDetailPage() {
                     <div className="text-2xl font-medium">
                       {priceEth.toFixed(2)} ETH
                     </div>
-                    {priceUsd && (
+                    {priceUsd !== undefined && (
                       <div className="text-sm opacity-70">
                         ${" "}
                         {priceUsd.toLocaleString(undefined, {
@@ -259,11 +190,11 @@ export default function NFTDetailPage() {
 
             <motion.div variants={fadeIn} className="space-y-2">
               <div className="text-sm opacity-70">Contract</div>
-              <div className="font-mono text-sm break-all">{contract}</div>
-              <div className="text-sm opacity-70 mt-2">Token ID</div>
               <div className="font-mono text-sm break-all">
-                {effectiveTokenId || tokenId}
+                {truncateMiddle(contract)}
               </div>
+              <div className="text-sm opacity-70 mt-2">Token ID</div>
+              <div className="font-mono text-sm break-all">{tokenId}</div>
             </motion.div>
 
             <motion.div variants={fadeIn} className="space-y-2">
@@ -274,7 +205,7 @@ export default function NFTDetailPage() {
                     key={o}
                     className="font-mono text-xs break-all opacity-90"
                   >
-                    {o}
+                    {truncateMiddle(o)}
                   </div>
                 ))}
                 {owners && owners.length > 5 && (
@@ -297,7 +228,7 @@ export default function NFTDetailPage() {
                   }
                 }}
                 disabled={buying}
-                className={`flex items-center justify-center text-center w-full max-w-md disabled:cursor-not-allowed ${
+                className={`flex items-center justify-center text-center w-full max-w-sm disabled:cursor-not-allowed ${
                   buying ? "opacity-80 cursor-not-allowed" : ""
                 }`}
                 variants={scaleOnHover}

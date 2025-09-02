@@ -15,6 +15,7 @@ import { MobileSidebar } from "./MobileSidebar";
 import { useUser } from "@/app/context/UserContext";
 import { FiRefreshCw } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa";
+import { useAccount, useConnect } from "wagmi";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -27,6 +28,8 @@ export function Navbar() {
   const profileRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const { user: me, refreshUser, clearUser } = useUser();
+  const { isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
 
   useEffect(() => {
     if (profileOpen) void refreshUser();
@@ -78,10 +81,21 @@ export function Navbar() {
     setAvatarSeed(s);
   };
 
-
   useEffect(() => {
     setAvatarError(false);
   }, [avatarSeed]);
+
+  const onConnectWallet = () => {
+    try {
+      const injected =
+        connectors.find((c) => c.id === "injected") ?? connectors[0];
+      if (!injected) return;
+      if (isConnected) return; // already connected; could open profile or noop
+      connect({ connector: injected });
+    } catch (e) {
+      console.error("Wallet connect failed", e);
+    }
+  };
 
   return (
     <motion.nav
@@ -90,16 +104,18 @@ export function Navbar() {
       animate="visible"
       className="relative z-50 w-full max-w-[1440px] mx-auto p-4 lg:pt-4 flex items-center justify-between lg:px-12 md:px-8"
     >
-      <motion.div className="flex items-center" variants={slideInFromLeft}>
-        <Image
-          src="/images/logo.svg"
-          alt="Logo"
-          width={100}
-          height={100}
-          className="w-[40px] lg:w-[43px]"
-        />
-        <p className="font-bold text-xl lg:text-3xl">HIHAMI</p>
-      </motion.div>
+      <Link href="/Home">
+        <motion.div className="flex items-center" variants={slideInFromLeft}>
+          <Image
+            src="/images/logo.svg"
+            alt="Logo"
+            width={100}
+            height={100}
+            className="w-[40px] lg:w-[43px]"
+          />
+          <p className="font-bold text-xl lg:text-3xl">HIHAMI</p>
+        </motion.div>
+      </Link>
 
       <motion.ul
         variants={staggerChildren}
@@ -127,6 +143,8 @@ export function Navbar() {
           className="items-center justify-between hidden lg:flex cursor-pointer hover:opacity-90"
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
+          onClick={onConnectWallet}
+          aria-label={isConnected ? "Wallet Connected" : "Connect Wallet"}
         >
           <Image
             src="/images/connect-wallet-btn.svg"
@@ -237,8 +255,12 @@ export function Navbar() {
                 </div>
                 <div className="mt-3 h-px bg-white/10" />
                 <ul className="mt-3 space-y-2 text-sm *:rounded-md *:px-3 *:py-2">
-                  <li className="hover:bg-white/10 cursor-pointer">Profile</li>
-                  <li className="hover:bg-white/10 cursor-pointer">Settings</li>
+                  <li className="hover:bg-white/10 cursor-pointer">
+                    <Link href="/Profile" className="w-full">Profile</Link>
+                  </li>
+                  <li className="hover:bg-white/10 cursor-pointer">
+                    <Link href="/Profile" className="w-full">Settings</Link>
+                  </li>
                   <li
                     className="hover:bg-white/10 cursor-pointer text-red-300"
                     onClick={onSignOut}

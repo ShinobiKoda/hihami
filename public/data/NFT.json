@@ -1,0 +1,382 @@
+[
+  {
+    "id": "1",
+    "name": "Bleeding Ghost",
+    "description": "A spectral figure dripping neon essence from another realm, lingering between presence and memory. Its edges blur like ink in water, leaving luminous trails that hint at stories untold. The glow shifts from violet to magenta as if breathing, inviting viewers to lean closer and listen to the silence. Part of the Hihami Genesis, it embodies the threshold where myth and circuitry meet.",
+    "image": "/images/bleeding-ghost-nft.svg",
+    "price": { "eth": 1.85 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "1" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x1111111111111111111111111111111111111111",
+      "username": "John Smith"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Mood", "value": "Ethereal" },
+      { "trait_type": "Glow", "value": "Neon" },
+      { "trait_type": "Backdrop", "value": "Void" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-1",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=1"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Living Of The Art",
+    "description": "A living canvas that pulses with color and motion, forever repainting itself in slow, hypnotic waves. Brushstrokes morph into ribbons of light, then return to paint, as if the artwork refuses to settle on a single form. The palette is vibrant and generous, radiating warmth that turns contemplation into a meditative loop. It’s art that feels alive, humming softly in the space between chaos and control.",
+    "image": "/images/living-of-the-art-nft.svg",
+    "price": { "eth": 2.4 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "2" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x2222222222222222222222222222222222222222",
+      "username": "Ava Lee"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Style", "value": "Abstract" },
+      { "trait_type": "Palette", "value": "Vibrant" },
+      { "trait_type": "Motion", "value": "Dynamic" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-2",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=2"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Statue of Vughae",
+    "description": "A timeless monument carved from cosmic stone, bearing the weather of eras no one remembers. Micro-fissures glint like constellations, suggesting the sculpture was forged under a foreign sky. Its posture is calm yet commanding, the kind that quiets a room and focuses every gaze. Vughae’s legacy is not told—it’s felt, like gravity that pulls the mind toward wonder.",
+    "image": "/images/statue-of-vughae-nft.svg",
+    "price": { "eth": 1.25 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "3" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x3333333333333333333333333333333333333333",
+      "username": "Noah King"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Material", "value": "Granite" },
+      { "trait_type": "Era", "value": "Ancient" },
+      { "trait_type": "Aura", "value": "Stoic" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-3",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=3"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "4",
+    "name": "Monkey Ape",
+    "description": "A cheeky primate with streetwear swagger, balancing mischief and style in equal measure. The tilted cap, sly grin, and confident posture read like a love letter to urban nights and neon alleys. Every line carries a playful rhythm, the kind that makes you smirk before you realize it. This is attitude distilled into a character—bold, bright, and unmistakably alive.",
+    "image": "/images/monkey-ape.svg",
+    "price": { "eth": 0.95 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "4" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x4444444444444444444444444444444444444444",
+      "username": "Mia Park"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Species", "value": "Ape" },
+      { "trait_type": "Accessory", "value": "Cap" },
+      { "trait_type": "Vibe", "value": "Playful" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-4",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=4"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "5",
+    "name": "Moon Fall",
+    "description": "A lunar descent etched in silver and shadow, where craters turn to canvases and light becomes poetry. The scene drifts in weightless quiet, evoking the hush of deep space and the pull of distant tides. Metallic sheens ripple like liquid mercury across a night that never ends. It’s a slow, deliberate fall into serenity, guided only by starlight.",
+    "image": "/images/moon-fall.svg",
+    "price": { "eth": 1.1 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "5" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x5555555555555555555555555555555555555555",
+      "username": "Liam Chen"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Theme", "value": "Space" },
+      { "trait_type": "Phase", "value": "Waning" },
+      { "trait_type": "Color", "value": "Silver" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-5",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=5"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "6",
+    "name": "Racer to Go",
+    "description": "Speed embodied—sleek lines and neon trails that slice the dark like a signature. Aerodynamic curves suggest a machine born for motion, all momentum and minimal drag. The palette crackles with urgency, echoing the hum of a finely tuned engine seconds before launch. Look closely and you can almost hear the countdown.",
+    "image": "/images/racer-to-go.svg",
+    "price": { "eth": 0.78 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "6" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x6666666666666666666666666666666666666666",
+      "username": "Zara Vale"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Category", "value": "Vehicle" },
+      { "trait_type": "Speed", "value": "Turbo" },
+      { "trait_type": "Trim", "value": "Neon" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-6",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=6"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "7",
+    "name": "Sleeping Beauty",
+    "description": "Serenity captured in crystalline stasis, suspended in a moment too perfect to disturb. Soft light gathers at the edges like dew, turning each facet into a whisper of color. Pastel tones invite quiet breathing, the kind that slows time to a gentle drift. It’s a portrait of rest as art, delicate and enduring.",
+    "image": "/images/sleeping-beauty.svg",
+    "price": { "eth": 0.88 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "7" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x7777777777777777777777777777777777777777",
+      "username": "Ethan Ray"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "State", "value": "Dormant" },
+      { "trait_type": "Light", "value": "Soft" },
+      { "trait_type": "Tone", "value": "Pastel" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-7",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=7"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "8",
+    "name": "Statue of Vughae",
+    "description": "A minimalist bust with ancient mystique, where marble calm meets modern restraint. Subtle veins run through the stone like thoughts beneath the surface, guiding the eye from profile to silhouette. The finish is matte, almost soft, absorbing daylight into a contemplative hush. It feels both found and designed, as if time itself were the sculptor.",
+    "image": "/images/statue-of-vughae.svg",
+    "price": { "eth": 1.0 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "8" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x8888888888888888888888888888888888888888",
+      "username": "Olivia Snow"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Material", "value": "Marble" },
+      { "trait_type": "Patina", "value": "Matte" },
+      { "trait_type": "Era", "value": "Neo-Classic" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-8",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=8"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "9",
+    "name": "Swagger Ape",
+    "description": "Bold attitude with a neon edge, broadcasting charisma from every contour. The shades, the stance, the tilt of the head—each detail delivers a wink to the viewer. Electric accents trace the outline like stage lights before a headline performance. It doesn’t ask for attention; it owns the room the second it enters.",
+    "image": "/images/swagger-ape.svg",
+    "price": { "eth": 1.33 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "9" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0x9999999999999999999999999999999999999999",
+      "username": "Kai Nova"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Species", "value": "Ape" },
+      { "trait_type": "Attitude", "value": "Swagger" },
+      { "trait_type": "Accessory", "value": "Shades" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-9",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=9"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  },
+  {
+    "id": "10",
+    "name": "Wired Human",
+    "description": "A cybernetic silhouette woven from circuits, where anatomy becomes architecture. Filaments of light thread through the frame like thoughts in motion, mapping a mind that’s part code, part dream. A synthwave palette bathes the form in magenta and violet, the hum of power almost audible. It’s the future imagined as a heartbeat—steady, bright, and beautifully precise.",
+    "image": "/images/wired-human.svg",
+    "price": { "eth": 1.65 },
+    "contract": {
+      "address": "0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c",
+      "name": "Hihami Originals",
+      "symbol": "HIHI",
+      "tokenType": "ERC-721"
+    },
+    "token": { "id": "10" },
+    "collection": { "name": "Hihami Genesis", "slug": "hihami-genesis" },
+    "owner": {
+      "address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "username": "Nova Byte"
+    },
+    "creator": {
+      "address": "0xaaaabbbbccccddddeeeeffff0000111122223333",
+      "username": "Hihami Studio"
+    },
+    "attributes": [
+      { "trait_type": "Type", "value": "Cyborg" },
+      { "trait_type": "Circuitry", "value": "Dense" },
+      { "trait_type": "Palette", "value": "Magenta" }
+    ],
+    "links": {
+      "permalink": "/NFT/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c-10",
+      "explorer": "https://etherscan.io/token/0x5fa1bc0d8e7a9c1b2d3e4f5a6b7c8d9e0f1a2b3c?a=10"
+    },
+    "chain": "ethereum",
+    "network": "mainnet",
+    "supply": 1,
+    "royaltyBps": 500,
+    "listed": true,
+    "createdAt": "2025-09-02T00:00:00Z"
+  }
+]
