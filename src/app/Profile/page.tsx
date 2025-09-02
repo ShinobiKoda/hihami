@@ -2,58 +2,23 @@
 import { useEffect, useState } from "react";
 import { Navbar } from "../components/layout/Navbar";
 import { useUser } from "@/app/context/UserContext";
-import { useAccount } from "wagmi";
+import { IoIosEyeOff } from "react-icons/io";
+import { FaEye } from "react-icons/fa";
+import Image from "next/image"
 
-function truncateMiddle(value: string, front: number = 6, back: number = 6) {
-  if (!value) return "";
-  if (value.length <= front + back + 1) return value;
-  return `${value.slice(0, front)}…${value.slice(-back)}`;
-}
-
-type Eip1193Provider = {
-  isTrust?: boolean;
-  isMetaMask?: boolean;
-  isCoinbaseWallet?: boolean;
-  isBraveWallet?: boolean;
-};
-
-function detectWalletBrand(connector?: { name?: string } | null) {
-  if (typeof window === "undefined") return connector?.name || "Wallet";
-  const eth = (
-    window as unknown as {
-      ethereum?: Eip1193Provider & {
-        providers?: (Eip1193Provider | undefined)[];
-      };
-    }
-  ).ethereum;
-  const providers = (eth?.providers || []).filter((p): p is Eip1193Provider =>
-    Boolean(p)
-  );
-  const pool = providers.length ? providers : eth ? [eth] : [];
-
-  const has = (prop: keyof Eip1193Provider) => pool.some((p) => p && p[prop]);
-  if (has("isTrust")) return "TrustWallet";
-  if (has("isMetaMask")) return "MetaMask";
-  if (has("isCoinbaseWallet")) return "CoinbaseWallet";
-  if (has("isBraveWallet")) return "BraveWallet";
-  return connector?.name || "Wallet";
-}
 
 export default function Profile() {
   const { user } = useUser();
-  const { address, addresses, isConnected, connector } = useAccount();
-  const walletBrand = detectWalletBrand(connector);
 
   const [fullName, setFullName] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [bio, setBio] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // When user logs in or changes, populate fields
   useEffect(() => {
     setUserName(user?.username ?? "");
     setEmail(user?.email ?? "");
-    // No full name in model; keep as-is or derive from username once
     setFullName((prev) => prev || user?.username || "");
   }, [user]);
 
@@ -67,7 +32,9 @@ export default function Profile() {
         }}
       >
         <div className="absolute -bottom-22 space-y-4">
-          <div className="bg-white w-[120px] h-[120px] rounded-full"></div>
+          <div className="bg-white w-[120px] h-[120px] rounded-full">
+            <Image src="https://api.dicebear.com/7.x/adventurer/svg?seed=p" className="flex items-center justify-center" alt="Profile pic" height={310} width={130}/>
+          </div>
           <p>Update your profile</p>
         </div>
       </div>
@@ -131,52 +98,22 @@ export default function Profile() {
             >
               Password
             </label>
-            <input
-              type="text"
-              className="rounded-[15px] border border-gray-500 px-4 py-6 outline-none"
-              placeholder="........"
-            />
-          </div>
-          {/* Wallet address (read-only dropdown) */}
-          <div className="flex flex-col gap-4 lg:col-span-2">
-            <label className="font-light opacity-80 text-base lg:text-lg">
-              Connected Wallet
-            </label>
-            <select
-              className="rounded-[15px] border border-gray-500 px-4 py-6 outline-none font-mono bg-transparent"
-              disabled
-              value={
-                isConnected
-                  ? addresses && addresses.length
-                    ? addresses[0]
-                    : address || ""
-                  : ""
-              }
-              onChange={() => {}}
-            >
-              {isConnected &&
-                (addresses && addresses.length
-                  ? addresses
-                  : address
-                  ? [address]
-                  : []
-                ).map((addr) => (
-                  <option
-                    key={addr as string}
-                    value={addr as string}
-                    className="bg-[#140C1F]"
-                  >
-                    {`${walletBrand.toLowerCase()}: ${truncateMiddle(
-                      String(addr)
-                    )}`}
-                  </option>
-                ))}
-              {!isConnected && (
-                <option value="" className="bg-[#140C1F]">
-                  Not connected
-                </option>
-              )}
-            </select>
+            <div className="relative rounded-[15px] border border-gray-500 px-4 py-6 outline-none pr-12">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="border-none outline-none w-full"
+                placeholder="********"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A4A4A4] hover:text-white focus:outline-none"
+              >
+                {showPassword ? <IoIosEyeOff size={20} /> : <FaEye size={18} />}
+              </button>
+            </div>
           </div>
         </div>
 

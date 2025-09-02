@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { verifyOtpSchema } from "@/lib/validation";
 import { cookies } from "next/headers";
 import { decrypt, timingSafeEqualHex } from "@/lib/crypto";
@@ -126,6 +127,14 @@ export async function POST(req: Request) {
       if (insertErr) {
         return NextResponse.json({ error: insertErr.message }, { status: 500 });
       }
+    }
+
+    // Auto-login the user after successful verification so future visits bypass login
+    try {
+      const supabase = await createSupabaseServerClient();
+      await supabase.auth.signInWithPassword({ email, password });
+    } catch {
+      // If auto-login fails, still return success for verification; user can log in manually
     }
 
     const resp = NextResponse.json({ message: "Email verified successfully!" });

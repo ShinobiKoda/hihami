@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loginSchema, type LoginSchema } from "@/lib/auth";
 import { IoIosMail, IoIosEyeOff } from "react-icons/io";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -60,6 +60,24 @@ export default function Page() {
       setServerError(msg);
     }
   };
+
+  // If already authenticated, redirect away from login
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/me", { cache: "no-store" });
+        if (!cancelled && res.ok) {
+          router.replace("/Home");
+          return;
+        }
+      } catch {}
+      // stay on login
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
 
   return (
     <div className="w-full lg:flex min-h-screen relative bg-[#160430] text-white">
