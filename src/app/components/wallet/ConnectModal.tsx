@@ -31,7 +31,6 @@ export function ConnectModal({ open, onClose }: ConnectModalProps) {
     }
   }, [open]);
 
-  // Auto-close only after a successful connection initiated here
   useEffect(() => {
     if (!open) return;
     if (status === "success" && attemptedFromHere.current) onClose();
@@ -48,13 +47,12 @@ export function ConnectModal({ open, onClose }: ConnectModalProps) {
     }
   }, [status, open]);
 
-  // Safety timeout to avoid indefinite pending state
   useEffect(() => {
     if (!open || !connectingId || status !== "pending") return;
     const t = window.setTimeout(() => {
       setConnectingId(null);
       setHint(
-        "This is taking a while. Check your wallet extension/app, disable blockers, or try WalletConnect."
+        "This is taking a while. Check your wallet extension/app and disable blockers."
       );
     }, 15000);
     return () => window.clearTimeout(t);
@@ -91,36 +89,47 @@ export function ConnectModal({ open, onClose }: ConnectModalProps) {
             </div>
 
             <p className="text-white/70 text-sm mt-2">
-              Choose a wallet provider. If you don’t have a wallet extension
-              installed, use WalletConnect to scan a QR code with your mobile
-              wallet.
+              Choose a wallet provider. Supported options: MetaMask and Trust
+              Wallet.
             </p>
 
             <div className="mt-6 space-y-3">
               {mounted &&
-                connectors.map((c) => (
-                  <motion.button
-                    key={c.id}
-                    variants={fadeInUp}
-                    initial="hidden"
-                    animate="visible"
-                    className="w-full flex items-center justify-between rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-3 text-left"
-                    onClick={() => {
-                      attemptedFromHere.current = true;
-                      setHint(null);
-                      setConnectingId(c.id);
-                      connect({ connector: c });
-                    }}
-                    disabled={!!connectingId}
-                  >
-                    <span className="font-medium">{c.name}</span>
-                    <span className="text-xs text-white/60">
-                      {connectingId === c.id && status === "pending"
-                        ? "Connecting…"
-                        : c.id}
-                    </span>
-                  </motion.button>
-                ))}
+                connectors
+                  .filter((c) => {
+                    const id = c.id.toLowerCase();
+                    const name = c.name.toLowerCase();
+                    return (
+                      id === "metamask" ||
+                      name.includes("metamask") ||
+                      id === "trust" ||
+                      id === "trustwallet" ||
+                      name.includes("trust")
+                    );
+                  })
+                  .map((c) => (
+                    <motion.button
+                      key={c.id}
+                      variants={fadeInUp}
+                      initial="hidden"
+                      animate="visible"
+                      className="w-full flex items-center justify-between rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-3 text-left"
+                      onClick={() => {
+                        attemptedFromHere.current = true;
+                        setHint(null);
+                        setConnectingId(c.id);
+                        connect({ connector: c });
+                      }}
+                      disabled={!!connectingId}
+                    >
+                      <span className="font-medium">{c.name}</span>
+                      <span className="text-xs text-white/60">
+                        {connectingId === c.id && status === "pending"
+                          ? "Connecting…"
+                          : c.id}
+                      </span>
+                    </motion.button>
+                  ))}
             </div>
 
             {error ? (
@@ -147,16 +156,7 @@ export function ConnectModal({ open, onClose }: ConnectModalProps) {
                 >
                   Get MetaMask
                 </a>
-                <a
-                  href="https://www.coinbase.com/wallet/downloads"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-lg bg-white/10 hover:bg-white/15 px-3 py-2 text-sm"
-                >
-                  Get Coinbase Wallet
-                </a>
               </div>
-             
             </div>
           </motion.div>
         </>

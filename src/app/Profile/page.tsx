@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUser } from "@/app/context/UserContext";
 import { IoIosEyeOff } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
@@ -10,6 +10,7 @@ import { motion } from "motion/react";
 import { useAccount } from "wagmi";
 import { HashLoader } from "react-spinners";
 import { useEthUsd } from "@/lib/useEthUsd";
+import { useSearchParams } from "next/navigation";
 import {
   fadeIn,
   fadeInUp,
@@ -48,6 +49,9 @@ export default function Profile() {
     fallback: Number(process.env.NEXT_PUBLIC_ETH_USD || 0) || 0,
     intervalMs: 60_000,
   });
+  // Hydration guard for client-only wallet UI
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   const [fullName, setFullName] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
@@ -67,27 +71,49 @@ export default function Profile() {
   const truncateAddress = (addr: string) =>
     addr ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : "";
 
+  const loadCreated = useCallback(async () => {
+    if (!user?.email) return;
+    try {
+      setLoadingCreated(true);
+      const res = await fetch(
+        `/api/nfts?ownerEmail=${encodeURIComponent(user.email)}`,
+        { cache: "no-store" }
+      );
+      const json = await res.json().catch(() => ({}));
+      if (json?.ok && Array.isArray(json.data))
+        setCreated(json.data as CreatedNFT[]);
+    } finally {
+      setLoadingCreated(false);
+    }
+  }, [user?.email]);
+
   useEffect(() => {
-    const load = async () => {
-      if (!user?.email) return;
-      try {
-        setLoadingCreated(true);
-        const res = await fetch(
-          `/api/nfts?ownerEmail=${encodeURIComponent(user.email)}`,
-          { cache: "no-store" }
-        );
-        const json = await res.json().catch(() => ({}));
-        if (json?.ok && Array.isArray(json.data))
-          setCreated(json.data as CreatedNFT[]);
-      } finally {
-        setLoadingCreated(false);
-      }
-    };
-    void load();
-    const onCreated = () => void load();
+    void loadCreated();
+    const onCreated = () => void loadCreated();
     window.addEventListener("hihami:nft-created", onCreated);
     return () => window.removeEventListener("hihami:nft-created", onCreated);
-  }, [user?.email]);
+  }, [loadCreated]);
+
+  // If redirected with ?created=1, perform a couple of quick retries to catch eventual consistency
+  const searchParams = useSearchParams();
+  const createdFlag = searchParams.get("created");
+  useEffect(() => {
+    if (!createdFlag || !user?.email) return;
+    let cancelled = false;
+    const attempt = async (delay: number) => {
+      if (cancelled) return;
+      await new Promise((r) => setTimeout(r, delay));
+      if (cancelled) return;
+      void loadCreated();
+    };
+    // run immediate and a couple of retries shortly after
+    void loadCreated();
+    void attempt(400);
+    void attempt(1000);
+    return () => {
+      cancelled = true;
+    };
+  }, [createdFlag, user?.email, loadCreated]);
 
   useEffect(() => {
     setUserName(user?.username ?? "");
@@ -137,7 +163,6 @@ export default function Profile() {
     setWalletLabel(label);
   }, [isConnected, connector]);
 
-  // Sync avatar with Navbar via localStorage and a custom event
   useEffect(() => {
     const KEY = "hihami.avatarSeed.v1";
     try {
@@ -320,8 +345,8 @@ export default function Profile() {
         className="w-full px-4 max-w-[1440px] mx-auto lg:px-12 md:px-8"
         variants={staggerChildren}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        animate="visible"
+        viewport={{ once: true, amount: 1 }}
       >
         <motion.h2
           className="font-light text-lg opacity-80 lg:text-3xl mt-28"
@@ -329,30 +354,32 @@ export default function Profile() {
         >
           User Profile Information
         </motion.h2>
-        {isConnected && address ? (
-          <motion.div
-            className="mt-2 text-sm text-white/85"
-            variants={fadeInUp}
-          >
-            <span className="font-semibold">{walletLabel}:</span>{" "}
-            <span className="inline-flex items-center gap-2">
-              <span>{truncateAddress(address)}</span>
-              <button
-                type="button"
-                onClick={onCopyAddress}
-                aria-label="Copy wallet address"
-                disabled={copied}
-                className="p-1 rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {copied ? (
-                  <FiCheck className="text-green-400" size={16} />
-                ) : (
-                  <FiCopy size={16} />
-                )}
-              </button>
-            </span>
-          </motion.div>
-        ) : null}
+        <div suppressHydrationWarning>
+          {hydrated && isConnected && address ? (
+            <motion.div
+              className="mt-2 text-sm text-white/85"
+              variants={fadeInUp}
+            >
+              <span className="font-semibold">{walletLabel}:</span>{" "}
+              <span className="inline-flex items-center gap-2">
+                <span>{truncateAddress(address)}</span>
+                <button
+                  type="button"
+                  onClick={onCopyAddress}
+                  aria-label="Copy wallet address"
+                  disabled={copied}
+                  className="p-1 rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {copied ? (
+                    <FiCheck className="text-green-400" size={16} />
+                  ) : (
+                    <FiCopy size={16} />
+                  )}
+                </button>
+              </span>
+            </motion.div>
+          ) : null}
+        </div>
         <motion.hr className="mt-[40px] text-[#A7A7A7]" variants={fadeIn} />
 
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 mt-10 gap-10">

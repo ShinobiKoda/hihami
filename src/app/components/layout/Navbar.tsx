@@ -149,10 +149,6 @@ export function Navbar() {
         } else {
           label = connector?.name || "Injected Wallet";
         }
-      } else if (connector?.id === "coinbaseWallet") {
-        label = "Coinbase Wallet";
-      } else if (connector?.id === "walletConnect") {
-        label = "WalletConnect";
       } else if (connector?.name) {
         label = connector.name;
       }
@@ -161,7 +157,6 @@ export function Navbar() {
   }, [isConnected, connector]);
 
   const onConnectWallet = () => {
-    // Always open the modal to let the user choose a wallet or see status.
     setWalletModalOpen(true);
   };
 

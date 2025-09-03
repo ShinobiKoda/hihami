@@ -1,14 +1,13 @@
 import { http, createConfig } from "wagmi";
 import { mainnet, polygon, sepolia } from "wagmi/chains";
-import { injected, walletConnect, coinbaseWallet } from "wagmi/connectors";
+import { injected } from "wagmi/connectors";
 
 // Declare a global type for caching wagmi config during HMR (dev only)
 declare global {
   var __wagmiConfig: ReturnType<typeof createConfig> | undefined;
 }
 
-const WALLETCONNECT_PROJECT_ID =
-  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "demo";
+// WalletConnect and Coinbase connectors removed; only injected (MetaMask/Trust) is supported.
 
 // Cache config across HMR to avoid re-initializing WalletConnect Core multiple times
 export const config =
@@ -16,9 +15,7 @@ export const config =
   createConfig({
     chains: [mainnet, polygon, sepolia],
     connectors: [
-      injected(), // MetaMask, Trust Wallet extension, Brave, Coinbase Wallet extension, etc.
-      walletConnect({ projectId: WALLETCONNECT_PROJECT_ID, showQrModal: true }),
-      coinbaseWallet({ appName: "HIHAMI" }),
+      injected(), // MetaMask, Trust Wallet extension, Brave, etc.
     ],
     transports: {
       [mainnet.id]: http(),

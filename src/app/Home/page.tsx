@@ -5,6 +5,7 @@ import Coverflow from "../components/Coverflow";
 import Image from "next/image";
 import { motion } from "motion/react";
 import Link from "next/link"
+import { Newsletter } from "../components/Newsletter";
 import {
   fadeInDown,
   fadeIn,
@@ -420,46 +421,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <motion.div
-        className="mt-30 w-full max-w-[1440px] mx-auto flex flex-col justify-center items-center gap-10 px-4 lg:px-12 md:px-8"
-        variants={staggerChildren}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <motion.h2
-          className="font-bold text-4xl lg:text-[64px] text-center"
-          variants={fadeInDown}
-        >
-          Ready for Next NFT Drop?
-        </motion.h2>
-        <motion.div
-          className="rounded-[15px] text-[#A48EA9] border border-[#AD1AAF] w-full max-w-[480px] flex justify-between"
-          variants={fadeInUp}
-        >
-          <input
-            type="email"
-            placeholder="abc@gmail.com"
-            className="outline-none border-none w-full px-4"
-          />
-          <motion.button
-            className="bg-[#AD1AAF] rounded-[15px] w-[68px] h-[60px] p-2 cursor-pointer hover:opacity-80"
-            variants={scaleOnHover}
-            initial="hidden"
-            animate="visible"
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Image
-              src="/images/arrow.svg"
-              alt="Arrow Image"
-              width={100}
-              height={100}
-              className="w-full"
-            />
-          </motion.button>
-        </motion.div>
-      </motion.div>
+      <Newsletter />
     </div>
   );
 }

@@ -36,3 +36,22 @@ export function notifyLoginSuccess(displayName: string) {
     { icon: false }
   );
 }
+
+export function notifyNFTCreated(nftName?: string) {
+  const name = nftName?.trim();
+  toast.success(
+    <span className="flex items-start gap-2">
+      <FaCheckCircle className="mt-0.5 text-emerald-400" size={18} />
+      <span>
+        <strong className="font-semibold">NFT successfully created</strong>
+        {name ? (
+          <>
+            <br />
+            <span className="opacity-90">{name}</span>
+          </>
+        ) : null}
+      </span>
+    </span>,
+    { icon: false }
+  );
+}

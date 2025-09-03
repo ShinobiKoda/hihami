@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "../context/UserContext";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { useRouter } from "next/navigation";
+import { Newsletter } from "../components/Newsletter";
 import ClipLoader from "react-spinners/ClipLoader";
 import {
   fadeInDown,
@@ -86,7 +87,6 @@ export default function CreateNFT() {
     }
     try {
       setSubmitting(true);
-      // Upload to Supabase Storage
       const supabase = createSupabaseBrowserClient();
       const mediaType = file.type;
       const path = `${(user?.email || "anon").replace(
@@ -117,15 +117,20 @@ export default function CreateNFT() {
       });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || "Failed to create NFT");
-      // Broadcast event so lists can refresh
+      // Show a success toast
+      try {
+        const { notifyNFTCreated } = await import(
+          "../components/animations/toast"
+        );
+        notifyNFTCreated(name);
+      } catch {}
       window.dispatchEvent(new CustomEvent("hihami:nft-created"));
       setFile(null);
       setName("");
       setDescription("");
       setPrice("");
       setFileError(null);
-      // Redirect to profile to view the created NFT card
-      router.push("/Profile");
+      setTimeout(() => router.push("/Profile?created=1"), 50);
     } catch (e: unknown) {
       setFileError(e instanceof Error ? e.message : "Failed to create NFT");
     } finally {
@@ -260,22 +265,7 @@ export default function CreateNFT() {
             onChange={(e) => setPrice(e.target.value)}
           />
         </motion.div>
-        <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
-          <label
-            htmlFor="description"
-            className="font-light text-lg lg:text-xl"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            rows={6}
-            placeholder="Describe your NFT..."
-            className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </motion.div>
+
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
           <label htmlFor="blockChain" className="font-light text-lg lg:text-xl">
             Blockchain
@@ -307,6 +297,23 @@ export default function CreateNFT() {
             })()}
           </div>
         </motion.div>
+
+        <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
+          <label
+            htmlFor="description"
+            className="font-light text-lg lg:text-xl"
+          >
+            Description
+          </label>
+          <textarea
+            id="description"
+            rows={6}
+            placeholder="Describe your NFT..."
+            className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </motion.div>
       </motion.div>
 
       <div className="mt-10">
@@ -331,46 +338,7 @@ export default function CreateNFT() {
         </motion.button>
       </div>
 
-      <motion.div
-        className="mt-30 w-full max-w-[1440px] mx-auto flex flex-col justify-center items-center gap-10 px-4 lg:px-12 md:px-8"
-        variants={staggerChildren}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <motion.h2
-          className="font-bold text-4xl lg:text-[64px] text-center"
-          variants={fadeInDown}
-        >
-          Ready for Next NFT Drop?
-        </motion.h2>
-        <motion.div
-          className="rounded-[15px] text-[#A48EA9] border border-[#AD1AAF] w-full max-w-[480px] flex justify-between"
-          variants={fadeInUp}
-        >
-          <input
-            type="email"
-            placeholder="abc@gmail.com"
-            className="outline-none border-none w-full px-4"
-          />
-          <motion.button
-            className="bg-[#AD1AAF] rounded-[15px] w-[68px] h-[60px] p-2 cursor-pointer hover:opacity-80"
-            variants={scaleOnHover}
-            initial="hidden"
-            animate="visible"
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Image
-              src="/images/arrow.svg"
-              alt="Arrow Image"
-              width={100}
-              height={100}
-              className="w-full"
-            />
-          </motion.button>
-        </motion.div>
-      </motion.div>
+      <Newsletter />
     </div>
   );
 }
