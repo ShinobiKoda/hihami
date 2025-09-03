@@ -1,8 +1,10 @@
 "use client";
 import { lato } from "../font";
 import Image from "next/image";
-import { FaEthereum } from "react-icons/fa";
 import { motion } from "motion/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useUser } from "../context/UserContext";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import {
   fadeInDown,
   fadeIn,
@@ -13,19 +15,134 @@ import {
 } from "../components/animations/motion";
 
 export default function CreateNFT() {
+  const { user } = useUser();
+  const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [external, setExternal] = useState("");
+  const [collection, setCollection] = useState("");
+  const [supply, setSupply] = useState("");
+  const [chain, setChain] = useState("ethereum");
+  const [submitting, setSubmitting] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const chains = useMemo(
+    () => [
+      { id: "ethereum", label: "Ethereum", icon: "/images/(eth).svg" },
+      { id: "polygon", label: "Polygon", icon: "/images/binance.svg" },
+      { id: "sepolia", label: "Sepolia", icon: "/images/(eth).svg" },
+    ],
+    []
+  );
+
+  const onPick = () => inputRef.current?.click();
+  const onSelect = (f?: File) => {
+    if (!f) return;
+    const ok = /^image\//.test(f.type) || /^video\//.test(f.type);
+    if (!ok) {
+      setFile(null);
+      setFileError("Only images and videos are allowed");
+      return;
+    }
+    setFileError(null);
+    setFile(f);
+  };
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    onSelect(f);
+  };
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const f = e.dataTransfer.files?.[0];
+    onSelect(f);
+  };
+  const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const mediaPreviewUrl = useMemo(() => {
+    if (!file) return null;
+    return URL.createObjectURL(file);
+  }, [file]);
+
+  useEffect(() => {
+    return () => {
+      if (mediaPreviewUrl) URL.revokeObjectURL(mediaPreviewUrl);
+    };
+  }, [mediaPreviewUrl]);
+
+  const onSubmit = async () => {
+    if (!name.trim()) {
+      setFileError("Enter a name for your NFT");
+      return;
+    }
+    if (!file) {
+      setFileError("Please select an image or video");
+      return;
+    }
+    try {
+      setSubmitting(true);
+      // Upload to Supabase Storage
+      const supabase = createSupabaseBrowserClient();
+      const mediaType = file.type;
+      const path = `${(user?.email || "anon").replace(
+        /[^a-zA-Z0-9-_@.]/g,
+        "_"
+      )}/${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage
+        .from("nft-media")
+        .upload(path, file, { contentType: mediaType, upsert: false });
+      if (upErr) throw new Error(upErr.message || "Upload failed");
+      const { data: pub } = supabase.storage
+        .from("nft-media")
+        .getPublicUrl(path);
+      const mediaUrl = pub?.publicUrl as string;
+      const res = await fetch("/api/nfts/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          description: external || "",
+          mediaUrl,
+          mediaType,
+          priceEth: null,
+          chain,
+          ownerEmail: user?.email ?? null,
+          ownerUsername: user?.username ?? null,
+        }),
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || "Failed to create NFT");
+      // Broadcast event so lists can refresh
+      window.dispatchEvent(new CustomEvent("hihami:nft-created"));
+      setFile(null);
+      setName("");
+      setExternal("");
+      setCollection("");
+      setSupply("");
+      setFileError(null);
+    } catch (e: unknown) {
+      setFileError(e instanceof Error ? e.message : "Failed to create NFT");
+    } finally {
+      setSubmitting(false);
+    }
+  };
   return (
     <div className="w-full text-white max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 mt-10 lg:mt-20">
       <motion.div
         className="text-center space-y-8 mb-10"
         variants={staggerChildren}
         initial="hidden"
-        animate="visible"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
       >
         <motion.h2
           className="font-medium text-4xl lg:text-[64px]"
           variants={fadeInDown}
         >
-          Create Your Own MasterPiece
+          Create NFT
         </motion.h2>
         <motion.p
           className={`${lato.className} text-base lg:text-lg opacity-50`}
@@ -42,7 +159,11 @@ export default function CreateNFT() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
-        <div className="w-full rounded-[15px] border-2 border-dashed border-white/50 h-full flex flex-col items-center justify-center space-y-8">
+        <div
+          className="w-full rounded-[15px] border-2 border-dashed border-white/50 h-full flex flex-col items-center justify-center space-y-4"
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+        >
           <motion.div
             className="w-[85px] h-[85px] rounded-md bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] flex items-center justify-center"
             variants={zoomIn}
@@ -54,24 +175,51 @@ export default function CreateNFT() {
               width={30}
             />
           </motion.div>
-          <motion.p className="flex flex-col gap-4" variants={fadeIn}>
+          <motion.p className="flex flex-col gap-2" variants={fadeIn}>
             <span className="font-normal text-base lg:text-lg">
               Drag and Drop Your NFT File Here
             </span>
             <span className="font-light text-white opacity-50 text-base">
-              Png, Jpg, Gif, Video Or Any File Up to 100mb
+              Images or Videos up to 100mb
             </span>
           </motion.p>
+          {fileError && <p className="text-sm text-red-400">{fileError}</p>}
+          {file && (
+            <div className="mt-2">
+              {file.type.startsWith("image/") ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={mediaPreviewUrl || undefined}
+                  alt="Preview"
+                  className="w-[180px] h-[180px] object-cover rounded-lg"
+                />
+              ) : (
+                <video
+                  src={mediaPreviewUrl || undefined}
+                  className="w-[220px] h-[160px] rounded-lg"
+                  controls
+                />
+              )}
+            </div>
+          )}
           <motion.p
-            className="underline text-[#379BD3] font-normal text-lg lg:text-xl"
+            className="underline text-[#379BD3] font-normal text-lg lg:text-xl cursor-pointer"
             variants={scaleOnHover}
             initial="hidden"
             animate="visible"
             whileHover="hover"
             whileTap="tap"
+            onClick={onPick}
           >
             Browse
           </motion.p>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*,video/*"
+            className="hidden"
+            onChange={onInputChange}
+          />
         </div>
       </motion.div>
 
@@ -90,6 +238,8 @@ export default function CreateNFT() {
             type="text"
             placeholder="Enter Item Name"
             className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
         </motion.div>
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
@@ -103,6 +253,8 @@ export default function CreateNFT() {
             type="text"
             placeholder="https://yoursite.com/item/123"
             className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
+            value={external}
+            onChange={(e) => setExternal(e.target.value)}
           />
         </motion.div>
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
@@ -113,6 +265,8 @@ export default function CreateNFT() {
             type="text"
             placeholder="Select Collection"
             className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
+            value={collection}
+            onChange={(e) => setCollection(e.target.value)}
           />
         </motion.div>
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
@@ -123,22 +277,57 @@ export default function CreateNFT() {
             type="text"
             placeholder="Supply"
             className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
+            value={supply}
+            onChange={(e) => setSupply(e.target.value)}
           />
         </motion.div>
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
           <label htmlFor="blockChain" className="font-light text-lg lg:text-xl">
-            Blockhain
+            Blockchain
           </label>
-          <div className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none flex items-center gap-2">
-            <FaEthereum size={20} />
-            <input
-              type="text"
-              placeholder="Etherum"
-              className="text-[#A48EA9] font-light text-base lg:text-xl w-full outline-none border-none"
-            />
+          <div className="rounded-[15px] px-4 py-2 border border-gray-600 outline-none flex items-center gap-3">
+            {(() => {
+              const sel = chains.find((c) => c.id === chain) || chains[0];
+              return (
+                <>
+                  <Image
+                    src={sel.icon}
+                    alt={sel.label}
+                    width={24}
+                    height={24}
+                  />
+                  <select
+                    value={chain}
+                    onChange={(e) => setChain(e.target.value)}
+                    className="bg-transparent outline-none border-none w-full text-[#A48EA9] font-light text-base lg:text-xl"
+                  >
+                    {chains.map((c) => (
+                      <option key={c.id} value={c.id} className="bg-[#140C1F]">
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              );
+            })()}
           </div>
         </motion.div>
       </motion.div>
+
+      <div className="mt-10">
+        <motion.button
+          onClick={onSubmit}
+          disabled={submitting}
+          className="inline-flex items-center gap-2 rounded-[12px] bg-[#AD1AAF] px-6 py-3 text-white disabled:opacity-70"
+          variants={scaleOnHover}
+          initial="hidden"
+          animate="visible"
+          whileHover="hover"
+          whileTap="tap"
+        >
+          {submitting ? "Creating..." : "Create NFT"}
+        </motion.button>
+      </div>
     </div>
   );
 }

@@ -15,6 +15,15 @@ import {
   staggerChildren,
   scaleOnHover,
 } from "@/app/components/animations/motion";
+type CreatedNFT = {
+  id: string;
+  name: string;
+  description: string | null;
+  media_url: string;
+  media_type: string;
+  chain: string | null;
+  price_eth: number | null;
+};
 
 export default function Profile() {
   const { user } = useUser();
@@ -32,9 +41,33 @@ export default function Profile() {
   const [walletLabel, setWalletLabel] = useState<string>("Wallet");
   const [copied, setCopied] = useState(false);
   const [copyToastId, setCopyToastId] = useState<string | number | null>(null);
+  const [created, setCreated] = useState<CreatedNFT[]>([]);
+  const [loadingCreated, setLoadingCreated] = useState(false);
 
   const truncateAddress = (addr: string) =>
     addr ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : "";
+
+  useEffect(() => {
+    const load = async () => {
+      if (!user?.email) return;
+      try {
+        setLoadingCreated(true);
+        const res = await fetch(
+          `/api/nfts?ownerEmail=${encodeURIComponent(user.email)}`,
+          { cache: "no-store" }
+        );
+        const json = await res.json().catch(() => ({}));
+        if (json?.ok && Array.isArray(json.data))
+          setCreated(json.data as CreatedNFT[]);
+      } finally {
+        setLoadingCreated(false);
+      }
+    };
+    void load();
+    const onCreated = () => void load();
+    window.addEventListener("hihami:nft-created", onCreated);
+    return () => window.removeEventListener("hihami:nft-created", onCreated);
+  }, [user?.email]);
 
   useEffect(() => {
     setUserName(user?.username ?? "");
@@ -348,6 +381,47 @@ export default function Profile() {
               {saving ? "Saving..." : "Save Profile"}
             </motion.button>
           </div>
+        </motion.div>
+
+        <motion.div className="mt-16" variants={fadeInUp}>
+          <h3 className="text-2xl font-semibold mb-4">NFTs Created</h3>
+          {loadingCreated ? (
+            <p className="text-white/70">Loading...</p>
+          ) : created.length === 0 ? (
+            <p className="text-white/60">No created NFTs yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {created.map((n) => (
+                <div
+                  key={n.id}
+                  className="rounded-xl border border-white/10 p-3 bg-white/5"
+                >
+                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-black/30 flex items-center justify-center">
+                    {n.media_type?.startsWith("image/") ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={n.media_url}
+                        alt={n.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <video
+                        src={n.media_url}
+                        className="w-full h-full object-cover"
+                        controls
+                      />
+                    )}
+                  </div>
+                  <div className="mt-3">
+                    <p className="font-medium">{n.name}</p>
+                    {n.chain ? (
+                      <p className="text-xs text-white/60">{n.chain}</p>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </div>

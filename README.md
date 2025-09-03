@@ -1,3 +1,20 @@
+## Supabase table (reference)
+
+Create a table `nfts` with columns:
+
+- id: uuid (default uuid_generate_v4()) primary key
+- name: text not null
+- description: text
+- media_url: text not null
+- media_type: text not null # e.g., image/png, video/mp4
+- price_eth: numeric
+- chain: text not null # e.g., ethereum, polygon, sepolia
+- owner_email: text
+- owner_username: text
+- created_at: timestamp with time zone default now()
+
+And a public storage bucket if you plan to upload files via Supabase Storage (not wired yet here).
+
 # HiHami
 
 Full-stack Next.js app with Supabase auth (custom email verification via OTP), profile management, and password reset flow. Animated UI built with motion.
