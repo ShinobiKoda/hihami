@@ -5,6 +5,8 @@ import { motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "../context/UserContext";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { useRouter } from "next/navigation";
+import ClipLoader from "react-spinners/ClipLoader";
 import {
   fadeInDown,
   fadeIn,
@@ -16,12 +18,12 @@ import {
 
 export default function CreateNFT() {
   const { user } = useUser();
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const [external, setExternal] = useState("");
-  const [collection, setCollection] = useState("");
-  const [supply, setSupply] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [chain, setChain] = useState("ethereum");
   const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -104,10 +106,10 @@ export default function CreateNFT() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
-          description: external || "",
+          description: description || "",
           mediaUrl,
           mediaType,
-          priceEth: null,
+          priceEth: price.trim() ? parseFloat(price) : null,
           chain,
           ownerEmail: user?.email ?? null,
           ownerUsername: user?.username ?? null,
@@ -119,10 +121,11 @@ export default function CreateNFT() {
       window.dispatchEvent(new CustomEvent("hihami:nft-created"));
       setFile(null);
       setName("");
-      setExternal("");
-      setCollection("");
-      setSupply("");
+      setDescription("");
+      setPrice("");
       setFileError(null);
+      // Redirect to profile to view the created NFT card
+      router.push("/Profile");
     } catch (e: unknown) {
       setFileError(e instanceof Error ? e.message : "Failed to create NFT");
     } finally {
@@ -135,7 +138,7 @@ export default function CreateNFT() {
         className="text-center space-y-8 mb-10"
         variants={staggerChildren}
         initial="hidden"
-        whileInView="visible"
+        animate="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
         <motion.h2
@@ -156,7 +159,7 @@ export default function CreateNFT() {
         className="bg-[linear-gradient(147.748deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.05)_100%)] backdrop-blur-3xl rounded-[15px] p-4 h-[461px] text-center"
         variants={fadeInUp}
         initial="hidden"
-        whileInView="visible"
+        animate="visible"
         viewport={{ once: true, amount: 0.2 }}
       >
         <div
@@ -228,7 +231,7 @@ export default function CreateNFT() {
         variants={staggerChildren}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: true, amount: 1 }}
       >
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
           <label htmlFor="itemName" className="font-light text-lg lg:text-xl">
@@ -243,49 +246,41 @@ export default function CreateNFT() {
           />
         </motion.div>
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
+          <label htmlFor="priceEth" className="font-light text-lg lg:text-xl">
+            Price (ETH)
+          </label>
+          <input
+            id="priceEth"
+            type="number"
+            inputMode="decimal"
+            step="0.0001"
+            placeholder="0.00"
+            className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+        </motion.div>
+        <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
           <label
-            htmlFor="externalLink"
+            htmlFor="description"
             className="font-light text-lg lg:text-xl"
           >
-            External Link
+            Description
           </label>
-          <input
-            type="text"
-            placeholder="https://yoursite.com/item/123"
+          <textarea
+            id="description"
+            rows={6}
+            placeholder="Describe your NFT..."
             className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
-            value={external}
-            onChange={(e) => setExternal(e.target.value)}
-          />
-        </motion.div>
-        <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
-          <label htmlFor="collection" className="font-light text-lg lg:text-xl">
-            Collection
-          </label>
-          <input
-            type="text"
-            placeholder="Select Collection"
-            className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
-            value={collection}
-            onChange={(e) => setCollection(e.target.value)}
-          />
-        </motion.div>
-        <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
-          <label htmlFor="supply" className="font-light text-lg lg:text-xl">
-            Supply
-          </label>
-          <input
-            type="text"
-            placeholder="Supply"
-            className="rounded-[15px] px-6 py-4 border border-gray-600 outline-none text-[#A48EA9] font-light text-base lg:text-xl"
-            value={supply}
-            onChange={(e) => setSupply(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </motion.div>
         <motion.div className="flex flex-col gap-6" variants={fadeInUp}>
           <label htmlFor="blockChain" className="font-light text-lg lg:text-xl">
             Blockchain
           </label>
-          <div className="rounded-[15px] px-4 py-2 border border-gray-600 outline-none flex items-center gap-3">
+          <div className="rounded-[15px] px-4 py-4 border border-gray-600 outline-none flex items-center gap-3">
             {(() => {
               const sel = chains.find((c) => c.id === chain) || chains[0];
               return (
@@ -325,9 +320,57 @@ export default function CreateNFT() {
           whileHover="hover"
           whileTap="tap"
         >
-          {submitting ? "Creating..." : "Create NFT"}
+          {submitting ? (
+            <span className="inline-flex items-center gap-3">
+              <ClipLoader size={18} color="#fff" />
+              Creating...
+            </span>
+          ) : (
+            "Create NFT"
+          )}
         </motion.button>
       </div>
+
+      <motion.div
+        className="mt-30 w-full max-w-[1440px] mx-auto flex flex-col justify-center items-center gap-10 px-4 lg:px-12 md:px-8"
+        variants={staggerChildren}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <motion.h2
+          className="font-bold text-4xl lg:text-[64px] text-center"
+          variants={fadeInDown}
+        >
+          Ready for Next NFT Drop?
+        </motion.h2>
+        <motion.div
+          className="rounded-[15px] text-[#A48EA9] border border-[#AD1AAF] w-full max-w-[480px] flex justify-between"
+          variants={fadeInUp}
+        >
+          <input
+            type="email"
+            placeholder="abc@gmail.com"
+            className="outline-none border-none w-full px-4"
+          />
+          <motion.button
+            className="bg-[#AD1AAF] rounded-[15px] w-[68px] h-[60px] p-2 cursor-pointer hover:opacity-80"
+            variants={scaleOnHover}
+            initial="hidden"
+            animate="visible"
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <Image
+              src="/images/arrow.svg"
+              alt="Arrow Image"
+              width={100}
+              height={100}
+              className="w-full"
+            />
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

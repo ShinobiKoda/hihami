@@ -8,6 +8,8 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { useAccount } from "wagmi";
+import { HashLoader } from "react-spinners";
+import { useEthUsd } from "@/lib/useEthUsd";
 import {
   fadeIn,
   fadeInUp,
@@ -24,10 +26,28 @@ type CreatedNFT = {
   chain: string | null;
   price_eth: number | null;
 };
+const fmt = new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 });
+const fmtUsd = new Intl.NumberFormat(undefined, {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 2,
+});
+const CHAIN_ICONS: Record<string, string> = {
+  ethereum: "/images/(eth).svg",
+  sepolia: "/images/(eth).svg",
+  polygon: "/images/binance.svg",
+};
+const chainIcon = (c?: string | null) =>
+  CHAIN_ICONS[(c || "ethereum").toLowerCase?.() as string] ||
+  "/images/(eth).svg";
 
 export default function Profile() {
   const { user } = useUser();
   const { isConnected, address, connector } = useAccount();
+  const ethUsd = useEthUsd({
+    fallback: Number(process.env.NEXT_PUBLIC_ETH_USD || 0) || 0,
+    intervalMs: 60_000,
+  });
 
   const [fullName, setFullName] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
@@ -233,6 +253,70 @@ export default function Profile() {
       </motion.div>
 
       <motion.div
+        className="mt-26 w-full px-4 max-w-[1440px] mx-auto lg:px-12 md:px-8"
+        variants={fadeInUp}
+      >
+        <h3 className="text-2xl font-semibold mb-4">NFTs Created</h3>
+        {loadingCreated ? (
+          <div className="py-6 flex items-center justify-center">
+            <HashLoader size={40} color="#AD1AAF" />
+          </div>
+        ) : created.length === 0 ? (
+          <p className="text-white/60">No created NFTs yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {created.map((n) => (
+              <div
+                key={n.id}
+                className="rounded-xl border border-white/10 p-3 bg-white/5"
+              >
+                <div className="aspect-square w-full overflow-hidden rounded-lg bg-black/30 flex items-center justify-center">
+                  {n.media_type?.startsWith("image/") ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={n.media_url}
+                      alt={n.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <video
+                      src={n.media_url}
+                      className="w-full h-full object-cover"
+                      controls
+                    />
+                  )}
+                </div>
+                <div className="mt-3 space-y-1">
+                  <p className="font-medium text-base">{n.name}</p>
+                  <p className="text-xs text-white/70">
+                    by {user?.username || "You"}
+                  </p>
+                  {n.price_eth != null ? (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Image
+                        src={chainIcon(n.chain)}
+                        alt={n.chain || "ethereum"}
+                        width={16}
+                        height={16}
+                      />
+                      <span>{fmt.format(n.price_eth)} ETH</span>
+                      {ethUsd > 0 ? (
+                        <span className="text-white/60">
+                          {fmtUsd.format(n.price_eth * ethUsd)}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-white/60">No price</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+
+      <motion.div
         className="w-full px-4 max-w-[1440px] mx-auto lg:px-12 md:px-8"
         variants={staggerChildren}
         initial="hidden"
@@ -381,47 +465,6 @@ export default function Profile() {
               {saving ? "Saving..." : "Save Profile"}
             </motion.button>
           </div>
-        </motion.div>
-
-        <motion.div className="mt-16" variants={fadeInUp}>
-          <h3 className="text-2xl font-semibold mb-4">NFTs Created</h3>
-          {loadingCreated ? (
-            <p className="text-white/70">Loading...</p>
-          ) : created.length === 0 ? (
-            <p className="text-white/60">No created NFTs yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {created.map((n) => (
-                <div
-                  key={n.id}
-                  className="rounded-xl border border-white/10 p-3 bg-white/5"
-                >
-                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-black/30 flex items-center justify-center">
-                    {n.media_type?.startsWith("image/") ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={n.media_url}
-                        alt={n.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <video
-                        src={n.media_url}
-                        className="w-full h-full object-cover"
-                        controls
-                      />
-                    )}
-                  </div>
-                  <div className="mt-3">
-                    <p className="font-medium">{n.name}</p>
-                    {n.chain ? (
-                      <p className="text-xs text-white/60">{n.chain}</p>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </motion.div>
       </motion.div>
     </div>
