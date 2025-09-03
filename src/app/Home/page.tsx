@@ -4,6 +4,7 @@ import CarouselHorizontal from "../components/CarouselHorizontal";
 import Coverflow from "../components/Coverflow";
 import Image from "next/image";
 import { motion } from "motion/react";
+import Link from "next/link"
 import {
   fadeInDown,
   fadeIn,
@@ -154,9 +155,9 @@ export default function HomePage() {
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
                 <span className="button-48 px-8 lg:px-12 py-4 w-full">
-                  <span className="text font-medium text-base lg:text-[22px]">
+                  <Link href="/CreateNFT" className="text font-medium text-base lg:text-[22px]">
                     Create
-                  </span>
+                  </Link>
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               </motion.button>
