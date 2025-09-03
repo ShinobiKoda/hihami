@@ -324,37 +324,61 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      <div className="mt-10 lg:mt-20 p-4 lg:px-12 md:px-8">
-        <h3 className="bg-[linear-gradient(90.126deg,#FFFFFF_0%,#F81DFB_100%)] bg-clip-text text-transparent font-medium text-2xl md:text-3xl text-center lg:my-32 my-24">
+      <motion.div
+        className="mt-10 lg:mt-20 p-4 lg:px-12 md:px-8"
+        variants={staggerChildren}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <motion.h3
+          className="bg-[linear-gradient(90.126deg,#FFFFFF_0%,#F81DFB_100%)] bg-clip-text text-transparent font-medium text-2xl md:text-3xl text-center lg:my-32 my-24"
+          variants={fadeIn}
+        >
           Explore Our Newly Released NFT Collection
-        </h3>
+        </motion.h3>
         <div>
-          <h2 className="w-full text-center font-medium text-4xl lg:text-[64px] mb-16">
+          <motion.h2
+            className="w-full text-center font-medium text-4xl lg:text-[64px] mb-16"
+            variants={fadeInDown}
+          >
             Our Collection
-          </h2>
-          <div className="xl:hidden">
+          </motion.h2>
+          <motion.div className="xl:hidden" variants={fadeInUp}>
             <CarouselHorizontal
               items={nftCollection}
               intervalMs={3000}
               className="px-2"
               glossy={false}
             />
-          </div>
-          <div className="hidden xl:block">
+          </motion.div>
+          <motion.div className="hidden xl:block" variants={fadeInUp}>
             <Coverflow items={nftCollection} className="px-4" />
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="mt-10 lg:mt-20 p-4 lg:px-12 md:px-8 w-full max-w-[1440px] mx-auto">
         <div className="w-full flex items-center justify-between ">
           <div>
-            <h3 className="font-light text-base lg:text-[25px]">
+            <motion.h3
+              className="font-light text-base lg:text-[25px]"
+              variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               Most Loved NFTs of The Time
-            </h3>
-            <h2 className="font-medium text-4xl lg:text-[64px] mb-16">
+            </motion.h3>
+            <motion.h2
+              className="font-medium text-4xl lg:text-[64px] mb-16"
+              variants={fadeInDown}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               Hot Trending NFTs
-            </h2>
+            </motion.h2>
           </div>
 
           <motion.button
@@ -395,7 +419,46 @@ export default function HomePage() {
         </div>
       </div>
 
-      
+      <motion.div
+        className="mt-30 w-full max-w-[1440px] mx-auto flex flex-col justify-center items-center gap-10 px-4 lg:px-12 md:px-8"
+        variants={staggerChildren}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <motion.h2
+          className="font-bold text-4xl lg:text-[64px] text-center"
+          variants={fadeInDown}
+        >
+          Ready for Next NFT Drop?
+        </motion.h2>
+        <motion.div
+          className="rounded-[15px] text-[#A48EA9] border border-[#AD1AAF] w-full max-w-[480px] flex justify-between"
+          variants={fadeInUp}
+        >
+          <input
+            type="email"
+            placeholder="abc@gmail.com"
+            className="outline-none border-none w-full px-4"
+          />
+          <motion.button
+            className="bg-[#AD1AAF] rounded-[15px] w-[68px] h-[60px] p-2 cursor-pointer hover:opacity-80"
+            variants={scaleOnHover}
+            initial="hidden"
+            animate="visible"
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <Image
+              src="/images/arrow.svg"
+              alt="Arrow Image"
+              width={100}
+              height={100}
+              className="w-full"
+            />
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

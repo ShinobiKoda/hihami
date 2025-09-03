@@ -10,6 +10,7 @@ import {
   staggerChildren,
   fadeInUp,
   slideInFromRight,
+  scaleOnHover,
 } from "../animations/motion";
 import { MobileSidebar } from "./MobileSidebar";
 import { useUser } from "@/app/context/UserContext";
@@ -192,16 +193,60 @@ export function Navbar() {
           className="hidden xl:flex items-center gap-[50px] font-normal text-base lg:text-xl *:hover:opacity-90 *:cursor-pointer"
         >
           <motion.li variants={fadeInUp}>
-            <Link href="/Explore">EXPLORE</Link>
+            <Link href="/Explore">
+              <motion.span
+                className="inline-block relative after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:bg-[#AD1AAF] after:transform after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
+                variants={scaleOnHover}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
+                whileTap="tap"
+              >
+                EXPLORE
+              </motion.span>
+            </Link>
           </motion.li>
           <motion.li variants={fadeInUp}>
-            <Link href="/Trending">TRENDING NFTs</Link>
+            <Link href="/Trending">
+              <motion.span
+                className="inline-block relative after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:bg-[#AD1AAF] after:transform after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
+                variants={scaleOnHover}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
+                whileTap="tap"
+              >
+                TRENDING NFTs
+              </motion.span>
+            </Link>
           </motion.li>
           <motion.li variants={fadeInUp}>
-            <Link href="/Auctioned">AUCTIONED NFTs</Link>
+            <Link href="/Auctioned">
+              <motion.span
+                className="inline-block relative after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:bg-[#AD1AAF] after:transform after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
+                variants={scaleOnHover}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
+                whileTap="tap"
+              >
+                AUCTIONED NFTs
+              </motion.span>
+            </Link>
           </motion.li>
           <motion.li variants={fadeInUp}>
-            <Link href="/Influencers">INFLUENCERS</Link>
+            <Link href="/Influencers">
+              <motion.span
+                className="inline-block relative after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:bg-[#AD1AAF] after:transform after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100"
+                variants={scaleOnHover}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
+                whileTap="tap"
+              >
+                INFLUENCERS
+              </motion.span>
+            </Link>
           </motion.li>
         </motion.ul>
 

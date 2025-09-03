@@ -19,7 +19,7 @@ import {
 export function Footer() {
   return (
     <motion.div
-      className="w-full max-w-[1440px] mx-auto mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 px-4 md:px-8 lg:px-12 gap-8 md:gap-10 lg:gap-12 py-10"
+      className="w-full max-w-[1440px] mx-auto mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 px-4 md:px-8 lg:px-12 gap-8 md:gap-10 lg:gap-12 py-10 text-white"
       variants={staggerChildren}
       initial="hidden"
       animate="visible"
@@ -95,21 +95,107 @@ export function Footer() {
         <h3 className="font-bold text-2xl">About</h3>
         <div className="flex flex-col gap-4 font-medium text-xl text-[#96839B]">
           <Link href="/AboutNFT" className="">
-            About NFT
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              About NFT
+            </motion.span>
           </Link>
-          <Link href="/Auctioned">Live Auctions</Link>
-          <Link href="/NFTBlog">NFT Blog</Link>
-          <Link href="/Activity">Activity</Link>
+          <Link href="/Auctioned">
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Live Auctions
+            </motion.span>
+          </Link>
+          <Link href="/NFTBlog">
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              NFT Blog
+            </motion.span>
+          </Link>
+          <Link href="/Activity">
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Activity
+            </motion.span>
+          </Link>
         </div>
       </motion.div>
 
       <motion.div className="space-y-5" variants={fadeInUp}>
         <h3 className="font-bold text-2xl">Support</h3>
         <div className="flex flex-col gap-4 font-medium text-xl text-[#96839B]">
-          <Link href="/Support">Help & Support</Link>
-          <Link href="#">Privacy Policy</Link>
-          <Link href="/AuthorProfile">Author Profile</Link>
-          <Link href="/Collections">Collection</Link>
+          <Link href="/Support">
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Help & Support
+            </motion.span>
+          </Link>
+          <Link href="#">
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Privacy Policy
+            </motion.span>
+          </Link>
+          <Link href="/AuthorProfile">
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Author Profile
+            </motion.span>
+          </Link>
+          <Link href="/Collections">
+            <motion.span
+              className="inline-block"
+              variants={scaleOnHover}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Collection
+            </motion.span>
+          </Link>
         </div>
       </motion.div>
     </motion.div>
