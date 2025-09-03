@@ -142,7 +142,7 @@ export default function HomePage() {
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
                 <span className="border px-8 py-4 bg-[#AD1AAF] border-[#AD1AAF] text-center flex items-center justify-center font-medium lg:text-[22px] text-base text-nowrap w-full">
-                  EXPLORE
+                  <Link href="/Explore">EXPLORE</Link>
                 </span>
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
               </motion.button>

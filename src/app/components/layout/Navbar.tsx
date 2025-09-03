@@ -247,7 +247,6 @@ export function Navbar() {
 
         <div className="flex items-center gap-[30px]">
           {!mounted ? (
-            // SSR-safe placeholder to avoid swapping "connect" vs "connected" during hydration
             <div
               className="hidden lg:block w-[200px] h-10 rounded-full bg-white/10 border border-white/15"
               aria-hidden="true"
@@ -387,6 +386,12 @@ export function Navbar() {
                   <div className="mt-3 h-px bg-white/10" />
                   <ul className="mt-3 space-y-2 text-sm *:rounded-md *:px-3 *:py-2">
                     <li className="hover:bg-white/10 cursor-pointer">
+                      <Link href="/CreateNFT" className="w-full">
+                        Create NFT
+                      </Link>
+                    </li>
+
+                    <li className="hover:bg-white/10 cursor-pointer">
                       <Link href="/Profile" className="w-full">
                         Profile
                       </Link>
@@ -411,7 +416,6 @@ export function Navbar() {
           onRandomizeSeed={randomizeSeed}
         />
       </motion.nav>
-      {/* Render modal outside nav so fixed overlay isn't constrained by nav's transform */}
       <ConnectModal
         open={walletModalOpen}
         onClose={() => setWalletModalOpen(false)}
