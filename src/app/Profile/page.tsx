@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useUser } from "@/app/context/UserContext";
 import { IoIosEyeOff } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
@@ -42,7 +42,7 @@ const chainIcon = (c?: string | null) =>
   CHAIN_ICONS[(c || "ethereum").toLowerCase?.() as string] ||
   "/images/(eth).svg";
 
-export default function Profile() {
+function ProfileContent() {
   const { user } = useUser();
   const { isConnected, address, connector } = useAccount();
   const ethUsd = useEthUsd({
@@ -495,5 +495,19 @@ export default function Profile() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+export default function Profile() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full min-h-[50vh] flex items-center justify-center bg-[#140C1F]">
+          <HashLoader color="#AD1AAF" />
+        </div>
+      }
+    >
+      <ProfileContent />
+    </Suspense>
   );
 }
