@@ -255,7 +255,7 @@ export function Navbar() {
             <motion.button
               type="button"
               variants={slideInFromRight}
-              className="flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3 py-2 hover:bg-white/15"
+              className="hidden lg:flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3 py-2 hover:bg-white/15"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={onConnectWallet}
