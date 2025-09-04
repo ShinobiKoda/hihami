@@ -55,3 +55,18 @@ export function notifyNFTCreated(nftName?: string) {
     { icon: false }
   );
 }
+
+const REDIRECT_TOAST_ID = "redirecting-dashboard" as const;
+
+export function showRedirectingToDashboard() {
+  // Loading toast that persists across navigation until dismissed
+  toast.loading("Redirecting to dashboard…", {
+    toastId: REDIRECT_TOAST_ID,
+    closeOnClick: false,
+    autoClose: false,
+  });
+}
+
+export function dismissRedirectingToast() {
+  toast.dismiss(REDIRECT_TOAST_ID);
+}

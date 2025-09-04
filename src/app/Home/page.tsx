@@ -1,10 +1,12 @@
 "use client";
+import { useEffect } from "react";
+import { dismissRedirectingToast } from "../components/animations/toast";
 import Carousel3D from "../components/Carousel3D";
 import CarouselHorizontal from "../components/CarouselHorizontal";
 import Coverflow from "../components/Coverflow";
 import Image from "next/image";
 import { motion } from "motion/react";
-import Link from "next/link"
+import Link from "next/link";
 import { Newsletter } from "../components/Newsletter";
 import {
   fadeInDown,
@@ -103,6 +105,9 @@ const supportedWallets = [
 ];
 
 export default function HomePage() {
+  useEffect(() => {
+    dismissRedirectingToast();
+  }, []);
   return (
     <div className="w-full min-h-full text-white">
       <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
@@ -156,7 +161,10 @@ export default function HomePage() {
               >
                 <span className="w-[4.59px] h-[42.6px] bg-[#AD1AAF]"></span>
                 <span className="button-48 px-8 lg:px-12 py-4 w-full">
-                  <Link href="/CreateNFT" className="text font-medium text-base lg:text-[22px]">
+                  <Link
+                    href="/CreateNFT"
+                    className="text font-medium text-base lg:text-[22px]"
+                  >
                     Create
                   </Link>
                 </span>

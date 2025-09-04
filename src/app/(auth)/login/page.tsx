@@ -17,7 +17,10 @@ import {
 } from "@/app/components/animations/motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { notifyLoginSuccess } from "@/app/components/animations/toast";
+import {
+  notifyLoginSuccess,
+  showRedirectingToDashboard,
+} from "@/app/components/animations/toast";
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
@@ -54,6 +57,7 @@ export default function Page() {
         }
       } catch {}
 
+      showRedirectingToDashboard();
       setTimeout(() => router.push("/Home"), 50);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Network error";
@@ -61,7 +65,6 @@ export default function Page() {
     }
   };
 
-  // If already authenticated, redirect away from login
   useEffect(() => {
     let cancelled = false;
     (async () => {
