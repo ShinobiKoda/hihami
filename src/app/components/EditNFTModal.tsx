@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
+import ClipLoader from "react-spinners/ClipLoader";
 
 type NFT = {
   id: string;
@@ -90,7 +91,7 @@ export default function EditNFTModal({ open, onClose, nft, onUpdated }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <motion.div
-        className="relative z-10 w-[92vw] max-w-[560px] rounded-2xl p-5 bg-[linear-gradient(147.748deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.06)_100%)] border border-white/15 text-white"
+        className="relative z-10 w-[92vw] max-w-[560px] rounded-2xl p-5 bg-[#140C1F] border border-white/15 text-white"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
@@ -184,7 +185,14 @@ export default function EditNFTModal({ open, onClose, nft, onUpdated }: Props) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {saving ? "Saving..." : "Save"}
+              {saving ? (
+                <span className="inline-flex items-center gap-2">
+                  <ClipLoader size={16} color="#fff" />
+                  Saving...
+                </span>
+              ) : (
+                "Save"
+              )}
             </motion.button>
           </div>
         </div>

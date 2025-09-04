@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { useAccount } from "wagmi";
 import { HashLoader } from "react-spinners";
-import { useEthUsd } from "@/lib/useEthUsd";
+import { useChainUsd } from "@/lib/useChainUsd";
 import { useSearchParams } from "next/navigation";
 import {
   fadeIn,
@@ -19,6 +19,7 @@ import {
   scaleOnHover,
 } from "@/app/components/animations/motion";
 import EditNFTModal from "@/app/components/EditNFTModal";
+import ConfirmDeleteModal from "@/app/components/ConfirmDeleteModal";
 type CreatedNFT = {
   id: string;
   name: string;
@@ -42,12 +43,18 @@ const CHAIN_ICONS: Record<string, string> = {
 const chainIcon = (c?: string | null) =>
   CHAIN_ICONS[(c || "ethereum").toLowerCase?.() as string] ||
   "/images/(eth).svg";
+const CHAIN_LABELS: Record<string, string> = {
+  ethereum: "ETH",
+  sepolia: "ETH",
+  polygon: "MATIC",
+};
+const chainLabel = (c?: string | null) =>
+  CHAIN_LABELS[(c || "ethereum").toLowerCase?.() as string] || "ETH";
 
 function ProfileContent() {
   const { user } = useUser();
   const { isConnected, address, connector } = useAccount();
-  const ethUsd = useEthUsd({
-    fallback: Number(process.env.NEXT_PUBLIC_ETH_USD || 0) || 0,
+  const chainUsd = useChainUsd({
     intervalMs: 60_000,
   });
   // Hydration guard for client-only wallet UI
@@ -70,6 +77,7 @@ function ProfileContent() {
   const [loadingCreated, setLoadingCreated] = useState(false);
   const [editing, setEditing] = useState<CreatedNFT | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<CreatedNFT | null>(null);
 
   const truncateAddress = (addr: string) =>
     addr ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : "";
@@ -254,7 +262,7 @@ function ProfileContent() {
         animate="visible"
       >
         <motion.div
-          className="absolute -bottom-22 space-y-4"
+          className="absolute -bottom-12 space-y-4"
           variants={staggerChildren}
           initial="hidden"
           animate="visible"
@@ -324,12 +332,21 @@ function ProfileContent() {
                         width={16}
                         height={16}
                       />
-                      <span>{fmt.format(n.price_eth)} ETH</span>
-                      {ethUsd > 0 ? (
-                        <span className="text-white/60">
-                          {fmtUsd.format(n.price_eth * ethUsd)}
-                        </span>
-                      ) : null}
+                      <span>
+                        {fmt.format(n.price_eth)} {chainLabel(n.chain)}
+                      </span>
+                      {(() => {
+                        const key = (n.chain || "ethereum").toLowerCase();
+                        const usdRate =
+                          key === "polygon"
+                            ? chainUsd.polygon
+                            : chainUsd.ethereum; // sepolia uses ETH
+                        return usdRate > 0 ? (
+                          <span className="text-white/60">
+                            {fmtUsd.format(n.price_eth! * usdRate)}
+                          </span>
+                        ) : null;
+                      })()}
                     </div>
                   ) : (
                     <p className="text-xs text-white/60">No price</p>
@@ -343,37 +360,10 @@ function ProfileContent() {
                     Edit
                   </button>
                   <button
-                    onClick={async () => {
-                      if (deletingId) return;
-                      const ok = window.confirm(
-                        "Delete this NFT? This cannot be undone."
-                      );
-                      if (!ok) return;
-                      try {
-                        setDeletingId(n.id);
-                        const res = await fetch(
-                          `/api/nfts/${encodeURIComponent(n.id)}`,
-                          {
-                            method: "DELETE",
-                          }
-                        );
-                        const json = await res.json().catch(() => ({}));
-                        if (!res.ok || !json?.ok)
-                          throw new Error(json?.error || "Failed to delete");
-                        // remove locally
-                        setCreated((prev) => prev.filter((x) => x.id !== n.id));
-                      } catch (e) {
-                        const msg =
-                          e instanceof Error ? e.message : "Failed to delete";
-                        toast.error(msg);
-                      } finally {
-                        setDeletingId(null);
-                      }
-                    }}
-                    disabled={deletingId === n.id}
-                    className="flex-1 px-3 py-2 rounded-lg border border-red-400/40 text-red-300 hover:bg-red-500/10 text-sm disabled:opacity-60"
+                    onClick={() => setDeleteTarget(n)}
+                    className="flex-1 px-3 py-2 rounded-lg border border-red-400/40 text-red-300 hover:bg-red-500/10 text-sm"
                   >
-                    {deletingId === n.id ? "Deleting..." : "Delete"}
+                    Delete
                   </button>
                 </div>
               </div>
@@ -387,6 +377,34 @@ function ProfileContent() {
         onClose={() => setEditing(null)}
         onUpdated={(u: CreatedNFT) => {
           setCreated((prev) => prev.map((x) => (x.id === u.id ? u : x)));
+        }}
+      />
+      <ConfirmDeleteModal
+        open={!!deleteTarget}
+        pending={!!deletingId}
+        onCancel={() => {
+          if (deletingId) return;
+          setDeleteTarget(null);
+        }}
+        onConfirm={async () => {
+          const n = deleteTarget;
+          if (!n || deletingId) return;
+          try {
+            setDeletingId(n.id);
+            const res = await fetch(`/api/nfts/${encodeURIComponent(n.id)}`, {
+              method: "DELETE",
+            });
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok || !json?.ok)
+              throw new Error(json?.error || "Failed to delete");
+            setCreated((prev) => prev.filter((x) => x.id !== n.id));
+            setDeleteTarget(null);
+          } catch (e) {
+            const msg = e instanceof Error ? e.message : "Failed to delete";
+            toast.error(msg);
+          } finally {
+            setDeletingId(null);
+          }
         }}
       />
 
