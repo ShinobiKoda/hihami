@@ -18,6 +18,7 @@ import {
   staggerChildren,
   scaleOnHover,
 } from "@/app/components/animations/motion";
+import EditNFTModal from "@/app/components/EditNFTModal";
 type CreatedNFT = {
   id: string;
   name: string;
@@ -67,6 +68,8 @@ function ProfileContent() {
   const [copyToastId, setCopyToastId] = useState<string | number | null>(null);
   const [created, setCreated] = useState<CreatedNFT[]>([]);
   const [loadingCreated, setLoadingCreated] = useState(false);
+  const [editing, setEditing] = useState<CreatedNFT | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const truncateAddress = (addr: string) =>
     addr ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : "";
@@ -94,7 +97,6 @@ function ProfileContent() {
     return () => window.removeEventListener("hihami:nft-created", onCreated);
   }, [loadCreated]);
 
-  // If redirected with ?created=1, perform a couple of quick retries to catch eventual consistency
   const searchParams = useSearchParams();
   const createdFlag = searchParams.get("created");
   useEffect(() => {
@@ -106,7 +108,6 @@ function ProfileContent() {
       if (cancelled) return;
       void loadCreated();
     };
-    // run immediate and a couple of retries shortly after
     void loadCreated();
     void attempt(400);
     void attempt(1000);
@@ -121,7 +122,6 @@ function ProfileContent() {
     setFullName((prev: string) => prev || user?.username || "");
   }, [user]);
 
-  // Derive wallet label similar to Navbar
   useEffect(() => {
     if (!isConnected) {
       setWalletLabel("Wallet");
@@ -335,11 +335,60 @@ function ProfileContent() {
                     <p className="text-xs text-white/60">No price</p>
                   )}
                 </div>
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => setEditing(n)}
+                    className="flex-1 px-3 py-2 rounded-lg border border-white/20 hover:bg-white/10 text-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (deletingId) return;
+                      const ok = window.confirm(
+                        "Delete this NFT? This cannot be undone."
+                      );
+                      if (!ok) return;
+                      try {
+                        setDeletingId(n.id);
+                        const res = await fetch(
+                          `/api/nfts/${encodeURIComponent(n.id)}`,
+                          {
+                            method: "DELETE",
+                          }
+                        );
+                        const json = await res.json().catch(() => ({}));
+                        if (!res.ok || !json?.ok)
+                          throw new Error(json?.error || "Failed to delete");
+                        // remove locally
+                        setCreated((prev) => prev.filter((x) => x.id !== n.id));
+                      } catch (e) {
+                        const msg =
+                          e instanceof Error ? e.message : "Failed to delete";
+                        toast.error(msg);
+                      } finally {
+                        setDeletingId(null);
+                      }
+                    }}
+                    disabled={deletingId === n.id}
+                    className="flex-1 px-3 py-2 rounded-lg border border-red-400/40 text-red-300 hover:bg-red-500/10 text-sm disabled:opacity-60"
+                  >
+                    {deletingId === n.id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </motion.div>
+      <EditNFTModal
+        open={!!editing}
+        nft={editing}
+        onClose={() => setEditing(null)}
+        onUpdated={(u: CreatedNFT) => {
+          setCreated((prev) => prev.map((x) => (x.id === u.id ? u : x)));
+        }}
+      />
 
       <motion.div
         className="w-full px-4 max-w-[1440px] mx-auto lg:px-12 md:px-8"
