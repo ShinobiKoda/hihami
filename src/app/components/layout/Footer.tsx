@@ -160,7 +160,7 @@ export function Footer() {
               Help & Support
             </motion.span>
           </Link>
-          <Link href="/Privacy">
+          <Link href="/Policy">
             <motion.span
               className="inline-block"
               variants={scaleOnHover}
