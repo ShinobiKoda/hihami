@@ -3,7 +3,6 @@ import { Newsletter } from "../components/Newsletter";
 import { motion } from "motion/react";
 import { fadeInUp, fadeInDown, zoomIn } from "../components/animations/motion";
 
-// Policy page restricted to fadeInUp, fadeInDown and zoomIn animations only.
 export default function PolicyPage() {
   return (
     <motion.div
