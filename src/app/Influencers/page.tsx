@@ -5,7 +5,7 @@ import {
   fadeIn,
   fadeInUp,
   staggerChildren,
-  zoomIn,
+  scaleOnHover,
 } from "../components/animations/motion";
 import Image from "next/image";
 
@@ -58,11 +58,13 @@ export default function InfluencersPage() {
                 <motion.div
                   key={p.handle}
                   variants={fadeInUp}
-                  className="rounded-[15px] bg-white/5 p-5"
+                  className="group rounded-[15px] bg-white/5 p-5 cursor-pointer border border-transparent hover:border-white/10 transition-colors duration-300 backdrop-blur-sm"
+                  whileHover="hover"
+                  whileTap="tap"
                 >
                   <motion.div
-                    variants={zoomIn}
-                    className="w-24 h-24 rounded-full bg-white/10 mx-auto overflow-hidden relative"
+                    variants={scaleOnHover}
+                    className="w-24 h-24 rounded-full bg-white/10 mx-auto overflow-hidden relative group-hover:shadow-lg group-hover:shadow-purple-500/20 transition-shadow"
                   >
                     <Image
                       src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
@@ -75,8 +77,12 @@ export default function InfluencersPage() {
                     />
                   </motion.div>
                   <div className="text-center mt-4">
-                    <p className="font-semibold">{finalName}</p>
-                    <p className="text-sm opacity-70">{p.handle}</p>
+                    <p className="font-semibold group-hover:text-purple-300 transition-colors">
+                      {finalName}
+                    </p>
+                    <p className="text-sm opacity-70 group-hover:opacity-90 transition-opacity">
+                      {p.handle}
+                    </p>
                   </div>
                 </motion.div>
               );
