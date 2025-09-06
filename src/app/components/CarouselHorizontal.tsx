@@ -15,7 +15,7 @@ type Props = {
   items: Item[];
   intervalMs?: number;
   className?: string;
-  glossy?: boolean; // toggle glossy card background
+  glossy?: boolean;
 };
 
 export default function CarouselHorizontal({

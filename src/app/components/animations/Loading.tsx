@@ -54,7 +54,6 @@ export default function Loading({ count = 8 }: LoadingProps) {
               className="w-full h-[261px] rounded-lg overflow-hidden bg-white/10"
             />
 
-            {/* Title row */}
             <div className="mt-[31px] px-6 flex items-center gap-4">
               <motion.div
                 variants={pulse}
@@ -72,7 +71,6 @@ export default function Loading({ count = 8 }: LoadingProps) {
               </div>
             </div>
 
-            {/* Price row */}
             <div className="mt-4 px-6 w-full flex justify-end">
               <div className="flex items-center gap-2">
                 <motion.div
@@ -93,7 +91,6 @@ export default function Loading({ count = 8 }: LoadingProps) {
             </div>
           </div>
 
-          {/* Button skeleton */}
           <motion.div
             variants={pulse}
             className="flex items-center justify-center text-center w-full"

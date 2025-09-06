@@ -39,7 +39,6 @@ export const zoomIn: Variants = {
   },
 };
 
-// Subtle fade + scale for hero/section headings
 export const fadeInScale: Variants = {
   hidden: { opacity: 0, scale: 0.98 },
   visible: {
@@ -130,7 +129,6 @@ export const sidebarSlide: Variants = {
   },
 };
 
-// 3D/Circular carousel helpers
 export const carouselItemEnter: Variants = {
   hidden: { opacity: 0, scale: 0.95 },
   visible: {
