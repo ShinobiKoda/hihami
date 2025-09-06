@@ -1,11 +1,14 @@
 "use client";
-import { motion } from "motion/react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   fadeInDown,
   fadeIn,
   fadeInUp,
   staggerChildren,
   scaleOnHover,
+  overlayFade,
+  zoomIn,
 } from "../components/animations/motion";
 import Image from "next/image";
 
@@ -13,9 +16,40 @@ const influencers = Array.from({ length: 8 }).map((_, i) => ({
   handle: `@creator${i + 1}`,
 }));
 
+const funFacts: string[] = [
+  "Once minted an NFT of a potato that sold for 0.01 ETH and now signs emails as 'Root Asset Manager'.",
+  "Claims their wallet password is 32 bytes of pure vibes (it isn’t, thankfully).",
+  "Accidentally staked the wrong token and called it ‘yield farming in hard mode’.",
+  "Creates pixel dragons at 3 AM and says they’re ‘gas-optimized companions’.",
+  "Believes coffee is a Layer 0 scalability solution for creators.",
+  "Has a dashboard tracking floor prices and the number of snacks left at home.",
+  "Once tried to explain gas fees using pizza slices and started a food fight metaphor thread.",
+  "Says ‘GM’ in five chains daily for cross‑community interoperability.",
+];
+
+interface SelectedInfluencer {
+  index: number;
+  handle: string;
+  name: string;
+}
+
 export default function InfluencersPage() {
+  const [selected, setSelected] = useState<SelectedInfluencer | null>(null);
+
+  const close = useCallback(() => setSelected(null), []);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!selected) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [selected, close]);
+
   return (
-    <div className="w-full min-h-screen bg-[#140C1F] text-white">
+    <div className="w-full min-h-screen bg-[#140C1F] text-white relative">
       <div className="w-full max-w-[1440px] mx-auto p-4 lg:px-12 md:px-8">
         <motion.div
           className="w-full text-center mt-10 lg:mt-20"
@@ -42,7 +76,7 @@ export default function InfluencersPage() {
         >
           {(() => {
             let usedCrypto = false;
-            return influencers.map((p) => {
+            return influencers.map((p, idx) => {
               const baseName = creatorNameFromSeed(p.handle);
               let finalName = baseName;
               if (baseName.startsWith("Crypto ")) {
@@ -58,9 +92,29 @@ export default function InfluencersPage() {
                 <motion.div
                   key={p.handle}
                   variants={fadeInUp}
-                  className="group rounded-[15px] bg-white/5 p-5 cursor-pointer border border-transparent hover:border-white/10 transition-colors duration-300 backdrop-blur-sm"
+                  className="group rounded-[15px] bg-white/5 p-5 cursor-pointer border border-transparent hover:border-white/10 transition-colors duration-300 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40"
                   whileHover="hover"
                   whileTap="tap"
+                  tabIndex={0}
+                  onClick={() =>
+                    setSelected({
+                      index: idx,
+                      handle: p.handle,
+                      name: finalName,
+                    })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelected({
+                        index: idx,
+                        handle: p.handle,
+                        name: finalName,
+                      });
+                    }
+                  }}
+                  aria-haspopup="dialog"
+                  aria-label={`Open fun fact for ${finalName}`}
                 >
                   <motion.div
                     variants={scaleOnHover}
@@ -90,6 +144,65 @@ export default function InfluencersPage() {
           })()}
         </motion.div>
       </div>
+
+      {/* Fun Fact Modal */}
+      <AnimatePresence>
+        {selected && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+              variants={overlayFade}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              onClick={close}
+            />
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="influencer-fact-title"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
+              <motion.div
+                variants={zoomIn}
+                className="w-full max-w-md rounded-2xl bg-[#1E132C] border border-white/10 p-6 shadow-xl relative overflow-hidden"
+              >
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-purple-500/5 via-transparent to-fuchsia-400/5" />
+                <button
+                  onClick={close}
+                  className="absolute top-3 right-3 text-white/60 hover:text-white transition-colors text-sm"
+                  aria-label="Close dialog"
+                >
+                  ✕
+                </button>
+                <h2
+                  id="influencer-fact-title"
+                  className="text-xl font-semibold mb-2 flex items-center gap-2"
+                >
+                  {selected.name}
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 font-normal tracking-wide">
+                    Fun Fact
+                  </span>
+                </h2>
+                <p className="text-sm leading-relaxed text-white/80">
+                  {funFacts[selected.index % funFacts.length]}
+                </p>
+                <div className="mt-5 flex justify-end gap-3">
+                  <button
+                    onClick={close}
+                    className="px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
